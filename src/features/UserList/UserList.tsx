@@ -1,14 +1,17 @@
 import React, {PropsWithChildren} from "react";
-import {IUser} from "./types/types";
+import {IUser} from "./types";
+import {User} from "../User/User";
+import {nanoid} from "nanoid";
 
 interface userListProps {
-    className?:string
+    className?: string
     users: IUser[]
 }
 
-export const UserList: React.FC<PropsWithChildren<userListProps>> = ({users}: PropsWithChildren<userListProps>) => {
-    return (
-        <>{users.map(user => )</>
+const baseStyle: React.CSSProperties = {
+    maxWidth: '400px',
+};
 
-    )
+export const UserList: React.FC<PropsWithChildren<userListProps>> = ({users}: PropsWithChildren<userListProps>) => {
+    return (<div style={baseStyle}>{users.map(user => <User key={nanoid()}  user={user}/>)}</div>)
 };
