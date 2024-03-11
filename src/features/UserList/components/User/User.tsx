@@ -1,5 +1,5 @@
 import React, { PropsWithChildren } from "react";
-import { IUser } from "../UserList/types";
+import { IUser } from "../../types";
 import { Flex } from "antd";
 
 interface UserProps {

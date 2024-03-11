@@ -1,42 +1,40 @@
 import * as React from "react";
-import { IBuildingInfoProps } from "./../components/BuildingInfo/BuildingInfo";
-import { IRoom, ISpaceInfo, IStage } from "features/Map/types";
+import { IBuilding, IRoom, ISpaceInfo, IStage } from "features/Map/types";
 import { IUser } from "features/UserList/types";
 import { BUILDINGS_INFO, BuildingEnums } from "features/UserList/mock";
 
 export const createBuilding = (
 	// все участники семинара
 	users: IUser[],
-	building: number,
+	buildingId: number,
 	title: string,
-	description: string,
 	places: number
-): IBuildingInfoProps => {
-	const buildingUsers = findUsersByBuilding(users, building);
+): IBuilding => {
+	const buildingUsers = findUsersByBuilding(users, buildingId);
 
-	const spaceInfo = createSpaceInfo(building, buildingUsers, places);
+	const spaceInfo = createSpaceInfo(buildingId, buildingUsers, places);
 
-	console.log({ buildingUsers, spaceInfo });
-	const stages = BUILDINGS_INFO[building].stages.map(
-		({ description, places, stage, title }) => {
-			const stageUsers = findUsersByStage(buildingUsers, building, stage);
+	const stages =
+		BUILDINGS_INFO[buildingId]?.stages.map(
+			({ description, places, id, title }) => {
+				console.log([{ buildingUsers, buildingId }]);
+				const stageUsers = findUsersByStage(buildingUsers, buildingId, id);
 
-			return createStage(
-				stageUsers,
-				building,
-				stage,
-				places,
-				title,
-				description
-			);
-		}
-	);
+				return createStage(
+					stageUsers,
+					buildingId,
+					id,
+					places,
+					title,
+					description
+				);
+			}
+		) ?? [];
 
 	return {
 		...spaceInfo,
 		stages,
 		title,
-		description,
 	};
 };
 
@@ -44,17 +42,38 @@ export const createStage = (
 	// пользователи живущие на этаже
 	users: IUser[],
 	// номер корпуса
-	building: number,
+	buildingId: number,
 	// номер этажа
-	stage: number,
+	stageId: number,
 	// количество мест на этаже
 	places: number,
 	title: string,
 	description?: string
 ): IStage => {
-	const spaceInfo = createSpaceInfo(stage, users, places);
+	const spaceInfo = createSpaceInfo(stageId, users, places);
 
-	return { ...spaceInfo, title, description, rooms: [] };
+	const stageInfo = BUILDINGS_INFO[buildingId].stages.find(
+		(stage) => stage.id === stageId
+	);
+
+	if (!stageInfo) {
+		console.error(`Этаж ${stageId} в корпусе ${buildingId} не найден`);
+		throw new Error(`Этаж ${stageId} в корпусе ${buildingId} не найден`);
+		//TODO: добавить toaster
+	}
+
+	const rooms =
+		stageInfo?.rooms.map((room) => {
+			const roomUsers = findUsersByRoom(users, buildingId, stageId, room.id);
+			const spaceInfo = createSpaceInfo(room.id, roomUsers, room.places);
+			return {
+				...spaceInfo,
+				title: `Комната №${room.id}`,
+				users: roomUsers,
+			};
+		}) ?? [];
+
+	return { ...spaceInfo, title, description, rooms, users };
 };
 
 export const createRoom = (
@@ -67,6 +86,7 @@ export const createRoom = (
 
 // Фабрика для информации о месте для сущностей Building, Stage, Room
 export function createSpaceInfo(
+	// номер сущности - Корпус, Этаж, Комната
 	id: number,
 	users: IUser[],
 	places: number

@@ -1,4 +1,5 @@
 import { IUser } from "features/UserList/types";
+import { ReactNode } from "react";
 
 export interface ISpaceInfo {
 	places: number;
@@ -7,6 +8,14 @@ export interface ISpaceInfo {
 	isFull: boolean;
 }
 
+// ПЕРЕЕХАЛО В Room.tsx
+export interface IBuilding extends ISpaceInfo {
+	id: number;
+	title?: string;
+	description?: ReactNode;
+	users: IUser[];
+	stages: IStage[];
+}
 // ПЕРЕЕХАЛО В Room.tsx
 export interface IRoom extends ISpaceInfo {
 	id: number;
@@ -20,4 +29,5 @@ export interface IStage extends ISpaceInfo {
 	title: string;
 	description?: string;
 	rooms: IRoom[];
+	users: IUser[];
 }

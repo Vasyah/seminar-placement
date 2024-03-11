@@ -3,9 +3,21 @@ import "./App.css";
 import { getUsers } from "./services/map/map";
 import { MAIN_PAGE_URL } from "./constants/constants";
 import { UserList } from "./features/UserList/UserList";
-import { BUILDING_MOCK, USERS_MOCK } from "features/UserList/mock";
+import {
+	BUILDINGS_INFO,
+	BuildingEnums,
+	USERS_MOCK,
+} from "features/UserList/mock";
 import { IUser } from "features/UserList/types";
-import { Breadcrumb, Layout, Menu, MenuProps, theme } from "antd";
+import {
+	Breadcrumb,
+	FloatButton,
+	Layout,
+	Menu,
+	MenuProps,
+	Modal,
+	theme,
+} from "antd";
 
 import {
 	DesktopOutlined,
@@ -13,6 +25,7 @@ import {
 	PieChartOutlined,
 	TeamOutlined,
 	UserOutlined,
+	UsergroupAddOutlined,
 } from "@ant-design/icons";
 import Building from "shared/components/building/Building";
 import BuildingInfo from "features/Map/components/BuildingInfo/BuildingInfo";
@@ -89,6 +102,7 @@ const layoutStyle = {
 
 function App() {
 	const [users, setUsers] = useState<IUser[]>([]);
+	const [userShow, setUserShow] = useState(false);
 	const [collapsed, setCollapsed] = useState(false);
 	const {
 		token: { colorBgContainer, borderRadiusLG },
@@ -132,18 +146,31 @@ function App() {
 								borderRadius: borderRadiusLG,
 							}}
 						>
-							{/* <UserList users={users} /> */}
-							<Building id={1} title="3 Корпус" />
-							<BuildingInfo
-								title={BUILDING_MOCK.title}
-								stages={BUILDING_MOCK.stages}
-								description={BUILDING_MOCK.description}
-							/>
+							<Building id={1} title="1 Корпус" users={users} />
+							<Building id={2} title="2 Корпус" users={users} />
 						</div>
 					</Content>
 					<Footer style={{ textAlign: "center" }}>
 						Ant Design ©{new Date().getFullYear()} Created by Ant UED
 					</Footer>
+					<FloatButton
+						icon={<UsergroupAddOutlined />}
+						type="primary"
+						style={{ right: 24 }}
+						onClick={() => setUserShow(true)}
+					/>
+
+					{userShow && (
+						<Modal
+							width={1024}
+							open={userShow}
+							keyboard
+							onCancel={() => setUserShow(false)}
+							onOk={() => setUserShow(false)}
+						>
+							<UserList users={users} />
+						</Modal>
+					)}
 				</Layout>
 			</Layout>
 		</div>

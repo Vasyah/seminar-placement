@@ -1,22 +1,63 @@
-import { Badge } from "antd";
+import { Badge, Button, Modal } from "antd";
+import BuildingInfo from "features/Map/components/BuildingInfo/BuildingInfo";
+import { IUser } from "features/UserList/types";
 import * as React from "react";
 import styled from "styled-components";
 
 interface IBuildingProps {
 	id: number;
 	title?: string;
-
-	onClick?(id: number): void;
+	users: IUser[];
 }
+
+const Building: React.FunctionComponent<IBuildingProps> = ({
+	id,
+	title,
+	users,
+}) => {
+	const [showModal, setShowModal] = React.useState(false);
+
+	const changeShowModal = () => setShowModal((prev) => !prev);
+	return (
+		<>
+			<BuildingWrapper onClick={changeShowModal}>
+				<Badge.Ribbon text={title} color="volcano">
+					<img
+						src="./house.png"
+						alt=""
+						width={buildingSize}
+						height={buildingSize}
+					/>
+				</Badge.Ribbon>
+			</BuildingWrapper>
+
+			{showModal && (
+				<Modal
+					className="buildingInfo-modal"
+					destroyOnClose
+					keyboard
+					open={showModal}
+					onOk={changeShowModal}
+					onCancel={changeShowModal}
+				>
+					<BuildingInfo id={id} users={users} />
+				</Modal>
+			)}
+		</>
+	);
+};
+
+export default Building;
 
 const buildingSize = "100";
 
-const BuildingWrapper = styled.div`
+const BuildingWrapper = styled(Button)`
 	width: ${buildingSize}px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	padding: 0.5rem;
+	min-height: ${buildingSize}px;
 	cursor: pointer;
 	&:hover {
 		border-radius: 0.5rem;
@@ -25,24 +66,3 @@ const BuildingWrapper = styled.div`
 			rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
 	}
 `;
-
-const Building: React.FunctionComponent<IBuildingProps> = ({
-	id,
-	onClick,
-	title,
-}) => {
-	return (
-		<BuildingWrapper>
-			<Badge.Ribbon text={title} color="volcano">
-				<img
-					src="./house.png"
-					alt=""
-					width={buildingSize}
-					height={buildingSize}
-				/>
-			</Badge.Ribbon>
-		</BuildingWrapper>
-	);
-};
-
-export default Building;

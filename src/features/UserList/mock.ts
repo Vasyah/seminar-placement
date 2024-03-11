@@ -5,14 +5,15 @@ import { IStage } from "features/Map/types";
 
 type BuildingInfoType = {
 	// номер корпуса
-	building: number;
+	id: number;
 	places: number;
 	stages: {
 		// номер этажа
-		stage: number;
+		id: number;
 		places: IStage["places"];
 		title: IStage["title"];
 		description: IStage["description"];
+		rooms: { id: number; places: number }[];
 	}[];
 };
 
@@ -59,7 +60,7 @@ export const USERS_MOCK: IUser[] = [
 		user_id: "621368087",
 		Корпус: "1",
 		Этаж: "1",
-		Комната: "1",
+		Комната: "6104",
 	},
 	{
 		row_id: 3,
@@ -90,7 +91,7 @@ export const USERS_MOCK: IUser[] = [
 		user_id: "580372057",
 		Корпус: "1",
 		Этаж: "1",
-		Комната: "1",
+		Комната: "6104",
 	},
 	{
 		row_id: 4,
@@ -121,7 +122,7 @@ export const USERS_MOCK: IUser[] = [
 		user_id: "580372057",
 		Корпус: "1",
 		Этаж: "1",
-		Комната: "1",
+		Комната: "6104",
 	},
 	{
 		row_id: 5,
@@ -152,7 +153,7 @@ export const USERS_MOCK: IUser[] = [
 		user_id: "690322582",
 		Корпус: "1",
 		Этаж: "2",
-		Комната: "1",
+		Комната: "3104",
 	},
 	{
 		row_id: 6,
@@ -183,7 +184,7 @@ export const USERS_MOCK: IUser[] = [
 		user_id: "495940005",
 		Корпус: "1",
 		Этаж: "2",
-		Комната: "1",
+		Комната: "3104",
 	},
 	{
 		row_id: 7,
@@ -3222,6 +3223,9 @@ export const USERS_MOCK: IUser[] = [
 		"Время прибытия на станцию": "",
 		"Информация по машине": "",
 		user_id: "893366640",
+		Корпус: "2",
+		Комната: "3303",
+		Этаж: "2",
 	},
 	{
 		row_id: 115,
@@ -3250,6 +3254,9 @@ export const USERS_MOCK: IUser[] = [
 		"Время прибытия на станцию": "",
 		"Информация по машине": "",
 		user_id: "912035057",
+		Корпус: "2",
+		Комната: "3104",
+		Этаж: "1",
 	},
 	{
 		row_id: 116,
@@ -3278,6 +3285,9 @@ export const USERS_MOCK: IUser[] = [
 		"Время прибытия на станцию": "",
 		"Информация по машине": "",
 		user_id: "1017993294",
+		Корпус: "2",
+		Комната: "3104",
+		Этаж: "1",
 	},
 ];
 
@@ -3291,33 +3301,57 @@ export const USERS_MOCK: IUser[] = [
 */
 export const BUILDINGS_INFO: Record<string, BuildingInfoType> = {
 	[BuildingEnums.One]: {
-		building: 1,
+		id: 1,
 		places: 128,
 		stages: [
 			{
-				stage: 1,
+				id: 1,
 				places: 64,
 				title: "1 этаж",
 				description: "Информация о первом этаже",
+				rooms: [
+					{ id: 6104, places: 4 },
+					{ id: 6105, places: 5 },
+				],
 			},
 			{
-				stage: 2,
+				id: 2,
 				places: 64,
 				title: "2 этаж",
 				description: "Информация о втором этаже",
+				rooms: [
+					{ id: 3104, places: 4 },
+					{ id: 3105, places: 4 },
+				],
+			},
+		],
+	},
+	[BuildingEnums.Two]: {
+		id: 2,
+		places: 128,
+		stages: [
+			{
+				id: 1,
+				places: 64,
+				title: "1 этаж",
+				description: "Информация о первом этаже",
+				rooms: [
+					{ id: 3104, places: 4 },
+					{ id: 3102, places: 5 },
+				],
+			},
+			{
+				id: 2,
+				places: 64,
+				title: "2 этаж",
+				description: "Информация о втором этаже",
+				rooms: [
+					{ id: 3303, places: 4 },
+					{ id: 3304, places: 4 },
+				],
 			},
 		],
 	},
 };
 
 const getUserMock = (idx: number) => USERS_MOCK[idx];
-
-export const BUILDING_MOCK: IBuildingInfoProps = createBuilding(
-	USERS_MOCK,
-	BUILDINGS_INFO[BuildingEnums.One].building,
-	"1 корпус",
-	"Информация о первом корпусе",
-	BUILDINGS_INFO[BuildingEnums.One].places
-);
-
-console.log(BUILDING_MOCK);
