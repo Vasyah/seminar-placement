@@ -2,7 +2,8 @@ import { DeleteOutlined, UserAddOutlined } from "@ant-design/icons";
 import { Space, Table, TableProps, Tag } from "antd";
 import { IUser } from "features/UserList/types";
 import * as React from "react";
-import MyButton from "../../../../shared/components/MyButton/MyButton";
+import MyButton from "shared/components/MyButton/MyButton";
+import { useListUsers } from "api/googleSheets";
 
 interface IUserTableProps {
 	users: IUser[];
@@ -26,6 +27,15 @@ const UserTable: React.FunctionComponent<IUserTableProps> = ({
 	onUserAdd,
 	onUserDelete,
 }) => {
+	const testData = useListUsers();
+
+	if (testData.isLoading || testData.isError) {
+		return <></>;
+	}
+
+	const userData = testData.data;
+	console.log(userData);
+	
 	const columns: TableProps<DataType>["columns"] = [
 		{
 			title: "ФИО",
@@ -114,6 +124,7 @@ const UserTable: React.FunctionComponent<IUserTableProps> = ({
 	];
 	const getData = (users: IUser[]) =>
 		users.map(({ ФИО, Город, Телефон, Корпус, Этаж, Комната, user_id }) => ({
+			key: ФИО + user_id,
 			ФИО,
 			Город,
 			Телефон,

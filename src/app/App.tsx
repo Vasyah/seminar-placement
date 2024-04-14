@@ -21,6 +21,7 @@ import { USERS_MOCK } from "features/UserList/mock";
 import { IUser } from "features/UserList/types";
 import Building from "shared/components/building/Building";
 import { UserList } from "features/UserList/UserList";
+import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -92,6 +93,15 @@ const layoutStyle = {
   maxWidth: "100%",
 };
 
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: false,
+    },
+  },
+});
+
 export const App = () => {
   const [users, setUsers] = useState<IUser[]>([]);
   const [userShow, setUserShow] = useState(false);
@@ -109,6 +119,7 @@ export const App = () => {
 
   return (
     <div className="App">
+      <QueryClientProvider client={queryClient}>
       <Layout style={{ minHeight: "100vh" }}>
         <Sider
           collapsible
@@ -165,6 +176,7 @@ export const App = () => {
           )}
         </Layout>
       </Layout>
+      </QueryClientProvider>
     </div>
   );
 };
