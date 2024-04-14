@@ -2,7 +2,7 @@ import { Badge, Button, Modal } from 'antd';
 import { IUser } from 'features/UserList/types';
 import * as React from 'react';
 import styled from 'styled-components';
-import BuildingInfo from "../../../features/Map/components/BuildingInfo/BuildingInfo";
+import BuildingInfo from "features/Map/components/BuildingInfo/BuildingInfo";
 
 interface IBuildingProps {
   id: number;
