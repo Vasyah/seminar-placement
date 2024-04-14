@@ -14,13 +14,13 @@ import { IUser } from "features/UserList/types";
 import * as React from "react";
 import Room from "../Room/Room";
 import { IStage } from "features/Map/types";
-import { BUILDINGS_INFO, BuildingEnums } from "features/UserList/mock";
-import { createBuilding } from "features/Map/utils/factories";
 import styled from "styled-components";
 import SpaceInfo from "../SpaceInfo/SpaceInfo";
 import { UserAddOutlined } from "@ant-design/icons";
-import MyButton from "shared/components/MyButton/MyButton";
-import { UserList } from "features/UserList/UserList";
+import {createBuilding} from "../../utils/factories";
+import {BuildingEnums, BUILDINGS_INFO} from "../../../UserList/mock";
+import MyButton from "../../../../shared/components/MyButton/MyButton";
+import {UserList} from "../../../UserList/UserList";
 
 export interface IBuildingInfoProps {
 	id: number;

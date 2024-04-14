@@ -2,7 +2,7 @@ import { DeleteOutlined, UserAddOutlined } from "@ant-design/icons";
 import { Space, Table, TableProps, Tag } from "antd";
 import { IUser } from "features/UserList/types";
 import * as React from "react";
-import MyButton from "shared/components/MyButton/MyButton";
+import MyButton from "../../../../shared/components/MyButton/MyButton";
 
 interface IUserTableProps {
 	users: IUser[];
