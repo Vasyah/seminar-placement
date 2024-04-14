@@ -1,7 +1,7 @@
 import * as React from "react";
 import { IBuilding, IRoom, ISpaceInfo, IStage } from "features/Map/types";
 import { IUser } from "features/UserList/types";
-import { BUILDINGS_INFO, BuildingEnums } from "features/UserList/mock";
+import { BUILDINGS_INFO, BuildingEnums } from "../../UserList/mock";
 
 export const createBuilding = (
 	// все участники семинара

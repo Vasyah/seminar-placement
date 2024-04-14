@@ -15,10 +15,11 @@ module.exports = {
 			},
 		},
 	],
+	parser: '@typescript-eslint/parser',
 	parserOptions: {
 		ecmaVersion: "latest",
 		sourceType: "module",
 	},
-	plugins: ["react"],
+	plugins: ["react", "@typescript-eslint"],
 	rules: {},
 };

@@ -1,14 +1,5 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
-import { getUsers } from "./services/map/map";
-import { MAIN_PAGE_URL } from "./constants/constants";
-import { UserList } from "./features/UserList/UserList";
-import {
-	BUILDINGS_INFO,
-	BuildingEnums,
-	USERS_MOCK,
-} from "features/UserList/mock";
-import { IUser } from "features/UserList/types";
 import {
 	Breadcrumb,
 	FloatButton,
@@ -27,8 +18,10 @@ import {
 	UserOutlined,
 	UsergroupAddOutlined,
 } from "@ant-design/icons";
-import Building from "shared/components/building/Building";
-import BuildingInfo from "features/Map/components/BuildingInfo/BuildingInfo";
+import { USERS_MOCK } from "./features/UserList/mock";
+import { IUser } from "./features/UserList/types";
+import Building from "./shared/components/building/Building";
+import { UserList } from "./features/UserList/UserList";
 
 const { Header, Content, Footer, Sider } = Layout;
 
