@@ -1,9 +1,9 @@
-import * as React from "react";
+import * as React from 'react';
 
 interface IMapProps {}
 
 const Map: React.FunctionComponent<IMapProps> = (props) => {
-	return <></>;
+    return <></>;
 };
 
 export default Map;

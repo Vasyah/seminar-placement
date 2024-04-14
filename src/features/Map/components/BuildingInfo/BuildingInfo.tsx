@@ -1,158 +1,133 @@
-import {
-	Avatar,
-	Badge,
-	BadgeProps,
-	Button,
-	Card,
-	Collapse,
-	Flex,
-	List,
-	Modal,
-	Tooltip,
-} from "antd";
-import { IUser } from "features/UserList/types";
-import * as React from "react";
-import Room from "../Room/Room";
-import { IStage } from "features/Map/types";
-import styled from "styled-components";
-import SpaceInfo from "../SpaceInfo/SpaceInfo";
-import { UserAddOutlined } from "@ant-design/icons";
-import {createBuilding} from "../../utils/factories";
-import {BuildingEnums, BUILDINGS_INFO} from "features/UserList/mock";
-import MyButton from "shared/components/MyButton/MyButton";
-import {UserList} from "features/UserList/UserList";
-import {useUpdateUserAccomodation} from "api/googleSheets";
+import { Avatar, Badge, BadgeProps, Button, Card, Collapse, Flex, List, Modal, Tooltip } from 'antd';
+import { IUser } from 'features/UserList/types';
+import * as React from 'react';
+import Room from '../Room/Room';
+import { IStage } from 'features/Map/types';
+import styled from 'styled-components';
+import SpaceInfo from '../SpaceInfo/SpaceInfo';
+import { UserAddOutlined } from '@ant-design/icons';
+import { createBuilding } from '../../utils/factories';
+import { BuildingEnums, BUILDINGS_INFO } from 'features/UserList/mock';
+import MyButton from 'shared/components/MyButton/MyButton';
+import { UserList } from 'features/UserList/UserList';
+import { useUpdateUserAccomodation } from 'api/googleSheets';
 
 export interface IBuildingInfoProps {
-	id: number;
-	users: IUser[];
+    id: number;
+    users: IUser[];
 }
 
-const BuildingInfo: React.FunctionComponent<IBuildingInfoProps> = ({
-	id,
-	users,
-}) => {
-	const { updateUserAccomodation, isUpdating } = useUpdateUserAccomodation();
-	const [userShow, setUserShow] = React.useState(false);
+const BuildingInfo: React.FunctionComponent<IBuildingInfoProps> = ({ id, users }) => {
+    const { updateUserAccomodation, isUpdating } = useUpdateUserAccomodation();
+    const [userShow, setUserShow] = React.useState(false);
 
-	const changeUserShow = (state: boolean) => setUserShow(state);
-	const building = createBuilding(
-		users,
-		id,
-		`${id} корпус`,
-		BUILDINGS_INFO[BuildingEnums.One].places
-	);
+    const changeUserShow = (state: boolean) => setUserShow(state);
+    const building = createBuilding(users, id, `${id} корпус`, BUILDINGS_INFO[BuildingEnums.One].places);
 
-	const getExtraInfo = (
-		usersCount: number,
-		isFull: boolean,
-		buildingName: string
-	): { status: BadgeProps["status"]; text: string } => {
-		if (isFull) {
-			return {
-				status: "success",
-				text: `${buildingName} заселён!`,
-			};
-		}
+    const getExtraInfo = (usersCount: number, isFull: boolean, buildingName: string): { status: BadgeProps['status']; text: string } => {
+        if (isFull) {
+            return {
+                status: 'success',
+                text: `${buildingName} заселён!`,
+            };
+        }
 
-		if (usersCount > 0) {
-			return { status: "processing", text: `${buildingName} заселяется` };
-		}
+        if (usersCount > 0) {
+            return { status: 'processing', text: `${buildingName} заселяется` };
+        }
 
-		return { status: "default", text: `${buildingName} пустой` };
-	};
+        return { status: 'default', text: `${buildingName} пустой` };
+    };
 
-	const stageInfo = building?.stages.map((stage) => {
-		const rooms = stage.rooms.map((room) => {
-			return {
-				key: room.id,
-				label: room.title,
-				children: <Room {...room} />,
-				extra: (
-					<Flex gap="middle" align="center">
-						<MyButton
-							tooltipProps={{ title: "Добавить участника" }}
-							buttonProps={{
-								onClick: (event) => {
-									event.stopPropagation();
-									changeUserShow(true);
-								},
-								icon: <UserAddOutlined />,
-							}}
-						/>
+    const stageInfo = building?.stages.map((stage) => {
+        const rooms = stage.rooms.map((room) => {
+            return {
+                key: room.id,
+                label: room.title,
+                children: <Room {...room} />,
+                extra: (
+                    <Flex gap="middle" align="center">
+                        <MyButton
+                            tooltipProps={{ title: 'Добавить участника' }}
+                            buttonProps={{
+                                onClick: (event) => {
+                                    event.stopPropagation();
+                                    changeUserShow(true);
+                                },
+                                icon: <UserAddOutlined />,
+                            }}
+                        />
 
-						<SpaceInfo
-							buildingName="Комната"
-							usersCount={room.users.length}
-							isFull={room.isFull}
-							emptyText={<div>Свободных мест: {room.emptyPlaces}</div>}
-							totalText={<div>Всего мест в комнате: {room.places}</div>}
-						/>
-					</Flex>
-				),
-			};
-		});
+                        <SpaceInfo
+                            buildingName="Комната"
+                            usersCount={room.users.length}
+                            isFull={room.isFull}
+                            emptyText={<div>Свободных мест: {room.emptyPlaces}</div>}
+                            totalText={<div>Всего мест в комнате: {room.places}</div>}
+                        />
+                    </Flex>
+                ),
+            };
+        });
 
-		const info = {
-			key: stage.id,
-			label: `${stage.title} ${stage.description}`,
+        const info = {
+            key: stage.id,
+            label: `${stage.title} ${stage.description}`,
 
-			children: (
-				<Collapse collapsible="icon" defaultActiveKey={["1"]} items={rooms} />
-			),
-			extra: (
-				<SpaceInfo
-					buildingName="Этаж"
-					usersCount={stage.users.length}
-					isFull={stage.isFull}
-					emptyText={<div>Свободных мест: {stage.emptyPlaces}</div>}
-					totalText={<div>Всего мест в комнате: {stage.places}</div>}
-				/>
-			),
-		};
+            children: <Collapse collapsible="icon" defaultActiveKey={['1']} items={rooms} />,
+            extra: (
+                <SpaceInfo
+                    buildingName="Этаж"
+                    usersCount={stage.users.length}
+                    isFull={stage.isFull}
+                    emptyText={<div>Свободных мест: {stage.emptyPlaces}</div>}
+                    totalText={<div>Всего мест в комнате: {stage.places}</div>}
+                />
+            ),
+        };
 
-		return info;
-	});
+        return info;
+    });
 
-	const onUserAdd = (id: string, ФИО: string) => {
-		changeUserShow(false);
-		updateUserAccomodation({user_id: id, ФИО: ФИО, Комната: "10", Этаж: "2", Корпус: "22"}).then(r => console.log(r));
-		console.log(`Пользователь добавлен ${id} ${ФИО}`);
-	};
+    const onUserAdd = (id: string, ФИО: string) => {
+        changeUserShow(false);
+        updateUserAccomodation({
+            user_id: id,
+            ФИО: ФИО,
+            Комната: '10',
+            Этаж: '2',
+            Корпус: '22',
+        }).then((r) => console.log(r));
+        console.log(`Пользователь добавлен ${id} ${ФИО}`);
+    };
 
-	const onUserDelete = async (id: string, ФИО: string) => {
-		changeUserShow(false);
-		await updateUserAccomodation({user_id: id, ФИО: ФИО}).then(r => console.log(r));
-		console.log(`Пользователь удален ${id} ${ФИО}`);
-	};
+    const onUserDelete = async (id: string, ФИО: string) => {
+        changeUserShow(false);
+        await updateUserAccomodation({ user_id: id, ФИО: ФИО }).then((r) => console.log(r));
+        console.log(`Пользователь удален ${id} ${ФИО}`);
+    };
 
-	return (
-		<BuildContainer>
-			<h3>{building.title}</h3>
-			<SpaceInfo
-				buildingName="Корпус"
-				usersCount={building.users.length}
-				totalText={<div>Всего мест в корпусе: {building.places}</div>}
-				emptyText={<div>Свободных мест в корпусе: {building.emptyPlaces}</div>}
-				isFull={building.isFull}
-			/>
-			<Collapse collapsible="icon" defaultActiveKey={["1"]} items={stageInfo} />
+    return (
+        <BuildContainer>
+            <h3>{building.title}</h3>
+            <SpaceInfo
+                buildingName="Корпус"
+                usersCount={building.users.length}
+                totalText={<div>Всего мест в корпусе: {building.places}</div>}
+                emptyText={<div>Свободных мест в корпусе: {building.emptyPlaces}</div>}
+                isFull={building.isFull}
+            />
+            <Collapse collapsible="icon" defaultActiveKey={['1']} items={stageInfo} />
 
-			<Modal
-				width={1024}
-				open={userShow}
-				keyboard
-				onCancel={() => setUserShow(false)}
-				onOk={() => setUserShow(false)}
-			>
-				<UserList users={users} onUserAdd={onUserAdd} onUserDelete={onUserDelete}/>
-			</Modal>
-		</BuildContainer>
-	);
+            <Modal width={1024} open={userShow} keyboard onCancel={() => setUserShow(false)} onOk={() => setUserShow(false)}>
+                <UserList users={users} onUserAdd={onUserAdd} onUserDelete={onUserDelete} />
+            </Modal>
+        </BuildContainer>
+    );
 };
 
 export default BuildingInfo;
 
 const BuildContainer = styled.div`
-	padding: 1rem;
+    padding: 1rem;
 `;
