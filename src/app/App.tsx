@@ -4,7 +4,6 @@ import {
   FloatButton,
   Layout,
   Menu,
-  MenuProps,
   Modal,
   theme,
 } from "antd";
