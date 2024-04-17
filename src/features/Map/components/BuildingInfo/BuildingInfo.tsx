@@ -10,7 +10,7 @@ import { createBuilding } from '../../utils/factories';
 import { BuildingEnums, BUILDINGS_INFO } from 'features/UserList/mock';
 import MyButton from 'shared/components/MyButton/MyButton';
 import { UserList } from 'features/UserList/UserList';
-import { useUpdateUserAccomodation } from 'api/googleSheets';
+import { useUpdateUserAccomodation } from 'shared/api/googleSheets';
 
 export interface IBuildingInfoProps {
     id: number;

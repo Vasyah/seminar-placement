@@ -3,7 +3,7 @@ import { Space, Table, TableProps, Tag } from 'antd';
 import { IUser } from 'features/UserList/types';
 import * as React from 'react';
 import MyButton from 'shared/components/MyButton/MyButton';
-import { useListUsers } from 'api/googleSheets';
+import { useListUsers } from 'shared/api/googleSheets';
 
 interface IUserTableProps {
     users: IUser[];
