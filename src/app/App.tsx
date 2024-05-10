@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Breadcrumb, FloatButton, Layout, Menu, Modal, theme } from 'antd';
+import { Breadcrumb, FloatButton, Layout, Menu, MenuProps, Modal, Spin, theme } from 'antd';
 
 import { DesktopOutlined, FileOutlined, PieChartOutlined, TeamOutlined, UserOutlined, UsergroupAddOutlined } from '@ant-design/icons';
 import { USERS_MOCK } from 'features/UserList/mock';
@@ -7,6 +7,7 @@ import { IUser } from 'features/UserList/types';
 import Building from 'shared/components/building/Building';
 import { UserList } from 'features/UserList/UserList';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useListUsers } from '../shared/api/googleSheets';
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -76,6 +77,7 @@ const queryClient = new QueryClient({
 });
 
 export const App = () => {
+    const usersData = useListUsers();
     const [users, setUsers] = useState<IUser[]>([]);
     const [userShow, setUserShow] = useState(false);
     const [collapsed, setCollapsed] = useState(false);
@@ -83,13 +85,13 @@ export const App = () => {
         token: { colorBgContainer, borderRadiusLG },
     } = theme.useToken();
     useEffect(() => {
-        // getUsers(MAIN_PAGE_URL).then(users => {
-        //     console.log(users)
-        //     setUsers(users.data)
-        // })
-        setUsers(USERS_MOCK);
-    }, []);
-
+        if (usersData.isFetched) {
+            setUsers(usersData.data);
+        }
+    }, [usersData]);
+    if (usersData.isLoading || usersData.isError) {
+        return <Spin tip="Loading..." size="large" fullscreen />;
+    }
     return (
         <div className="App">
             <QueryClientProvider client={queryClient}>
@@ -101,10 +103,7 @@ export const App = () => {
                     <Layout>
                         <Header style={{ padding: 0, background: colorBgContainer }} />
                         <Content style={{ margin: '0 16px' }}>
-                            <Breadcrumb style={{ margin: '16px 0' }}>
-                                <Breadcrumb.Item>User</Breadcrumb.Item>
-                                <Breadcrumb.Item>Bill</Breadcrumb.Item>
-                            </Breadcrumb>
+                            <Breadcrumb items={[{ title: 'User' }, { title: 'Bill' }]} style={{ margin: '16px 0' }} />
                             <div
                                 style={{
                                     padding: 24,

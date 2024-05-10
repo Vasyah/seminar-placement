@@ -16,7 +16,6 @@ export const createBuilding = (
 
     const stages =
         BUILDINGS_INFO[buildingId]?.stages.map(({ description, places, id, title }) => {
-            console.log([{ buildingUsers, buildingId }]);
             const stageUsers = findUsersByStage(buildingUsers, buildingId, id);
 
             return createStage(stageUsers, buildingId, id, places, title, description);

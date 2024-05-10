@@ -19,6 +19,7 @@ export interface IBuildingInfoProps {
 
 const BuildingInfo: React.FunctionComponent<IBuildingInfoProps> = ({ id, users }) => {
     const { updateUserAccomodation, isUpdating } = useUpdateUserAccomodation();
+    const [roomAndStage, setRoomAndStage] = React.useState<{ roomId: number; stageId: number } | null>(null);
     const [userShow, setUserShow] = React.useState(false);
 
     const changeUserShow = (state: boolean) => setUserShow(state);
@@ -52,6 +53,7 @@ const BuildingInfo: React.FunctionComponent<IBuildingInfoProps> = ({ id, users }
                             buttonProps={{
                                 onClick: (event) => {
                                     event.stopPropagation();
+                                    setRoomAndStage({ roomId: room.id, stageId: stage.id });
                                     changeUserShow(true);
                                 },
                                 icon: <UserAddOutlined />,
@@ -89,14 +91,14 @@ const BuildingInfo: React.FunctionComponent<IBuildingInfoProps> = ({ id, users }
         return info;
     });
 
-    const onUserAdd = (id: string, ФИО: string) => {
+    const onUserAdd = async (id: string, ФИО: string, buildingId: number, stageId: number, roomId: number) => {
         changeUserShow(false);
-        updateUserAccomodation({
+        await updateUserAccomodation({
             user_id: id,
             ФИО: ФИО,
-            Комната: '10',
-            Этаж: '2',
-            Корпус: '22',
+            Комната: roomId,
+            Этаж: stageId,
+            Корпус: buildingId,
         }).then((r) => console.log(r));
         console.log(`Пользователь добавлен ${id} ${ФИО}`);
     };
@@ -120,7 +122,7 @@ const BuildingInfo: React.FunctionComponent<IBuildingInfoProps> = ({ id, users }
             <Collapse collapsible="icon" defaultActiveKey={['1']} items={stageInfo} />
 
             <Modal width={1024} open={userShow} keyboard onCancel={() => setUserShow(false)} onOk={() => setUserShow(false)}>
-                <UserList users={users} onUserAdd={onUserAdd} onUserDelete={onUserDelete} />
+                <UserList users={users} onUserAdd={onUserAdd} onUserDelete={onUserDelete} buildingId={building.id} roomAndStage={roomAndStage} />
             </Modal>
         </BuildContainer>
     );

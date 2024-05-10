@@ -44,9 +44,9 @@ const listUsers = () => {
 interface UserAccomodation {
     user_id: string;
     ФИО: string;
-    Корпус?: string;
-    Этаж?: string;
-    Комната?: string;
+    Корпус?: number;
+    Этаж?: number;
+    Комната?: number;
 }
 
 const updateUserAccomodation = (accomodation: UserAccomodation) => {
