@@ -6,7 +6,7 @@ import { USERS_MOCK } from 'features/UserList/mock';
 import { IUser } from 'features/UserList/types';
 import Building from 'shared/components/building/Building';
 import { UserList } from 'features/UserList/UserList';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient } from '@tanstack/react-query';
 import { useListUsers } from '../shared/api/googleSheets';
 
 const { Header, Content, Footer, Sider } = Layout;
@@ -67,15 +67,6 @@ const layoutStyle = {
     maxWidth: '100%',
 };
 
-const queryClient = new QueryClient({
-    defaultOptions: {
-        queries: {
-            refetchOnWindowFocus: false,
-            retry: false,
-        },
-    },
-});
-
 export const App = () => {
     const usersData = useListUsers();
     const [users, setUsers] = useState<IUser[]>([]);
@@ -94,39 +85,37 @@ export const App = () => {
     }
     return (
         <div className="App">
-            <QueryClientProvider client={queryClient}>
-                <Layout style={{ minHeight: '100vh' }}>
-                    <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
-                        <div className="demo-logo-vertical" />
-                        <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items} />
-                    </Sider>
-                    <Layout>
-                        <Header style={{ padding: 0, background: colorBgContainer }} />
-                        <Content style={{ margin: '0 16px' }}>
-                            <Breadcrumb items={[{ title: 'User' }, { title: 'Bill' }]} style={{ margin: '16px 0' }} />
-                            <div
-                                style={{
-                                    padding: 24,
-                                    minHeight: 360,
-                                    background: colorBgContainer,
-                                    borderRadius: borderRadiusLG,
-                                }}
-                            >
-                                <Building id={1} title="1 Корпус" users={users} />
-                                <Building id={2} title="2 Корпус" users={users} />
-                            </div>
-                        </Content>
-                        <Footer style={{ textAlign: 'center' }}>Ant Design ©{new Date().getFullYear()} Created by Ant UED</Footer>
-                        <FloatButton icon={<UsergroupAddOutlined />} type="primary" style={{ right: 24 }} onClick={() => setUserShow(true)} />
+            <Layout style={{ minHeight: '100vh' }}>
+                <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
+                    <div className="demo-logo-vertical" />
+                    <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items} />
+                </Sider>
+                <Layout>
+                    <Header style={{ padding: 0, background: colorBgContainer }} />
+                    <Content style={{ margin: '0 16px' }}>
+                        <Breadcrumb items={[{ title: 'User' }, { title: 'Bill' }]} style={{ margin: '16px 0' }} />
+                        <div
+                            style={{
+                                padding: 24,
+                                minHeight: 360,
+                                background: colorBgContainer,
+                                borderRadius: borderRadiusLG,
+                            }}
+                        >
+                            <Building id={1} title="1 Корпус" users={users} />
+                            <Building id={2} title="2 Корпус" users={users} />
+                        </div>
+                    </Content>
+                    <Footer style={{ textAlign: 'center' }}>Ant Design ©{new Date().getFullYear()} Created by Ant UED</Footer>
+                    <FloatButton icon={<UsergroupAddOutlined />} type="primary" style={{ right: 24 }} onClick={() => setUserShow(true)} />
 
-                        {userShow && (
-                            <Modal width={1024} open={userShow} keyboard onCancel={() => setUserShow(false)} onOk={() => setUserShow(false)}>
-                                <UserList users={users} />
-                            </Modal>
-                        )}
-                    </Layout>
+                    {userShow && (
+                        <Modal width={1024} open={userShow} keyboard onCancel={() => setUserShow(false)} onOk={() => setUserShow(false)}>
+                            <UserList users={users} />
+                        </Modal>
+                    )}
                 </Layout>
-            </QueryClientProvider>
+            </Layout>
         </div>
     );
 };
