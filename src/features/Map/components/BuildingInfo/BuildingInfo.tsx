@@ -1,4 +1,4 @@
-import { Avatar, Badge, BadgeProps, Button, Card, Collapse, Flex, List, Modal, Tooltip } from 'antd';
+import { Avatar, Badge, BadgeProps, Button, Card, Collapse, Flex, List, Modal, Table, Tooltip } from 'antd';
 import { IUser } from 'features/UserList/types';
 import * as React from 'react';
 import Room from '../Room/Room';
@@ -109,6 +109,13 @@ const BuildingInfo: React.FunctionComponent<IBuildingInfoProps> = ({ id, users }
         console.log(`Пользователь удален ${id} ${ФИО}`);
     };
 
+    const getRooms = (stages: IStage[]) => {
+        const rooms = stages.map(stage => stage.rooms)
+
+        return rooms.flat()
+    }
+
+
     return (
         <BuildContainer>
             <h3>{building.title}</h3>
@@ -120,8 +127,8 @@ const BuildingInfo: React.FunctionComponent<IBuildingInfoProps> = ({ id, users }
                 isFull={building.isFull}
             />
             <Collapse collapsible="icon" defaultActiveKey={['1']} items={stageInfo} />
-
-            <Modal width={1024} open={userShow} keyboard onCancel={() => setUserShow(false)} onOk={() => setUserShow(false)}>
+            <Rooms
+                <Modal width={1024} open={userShow} keyboard onCancel={() => setUserShow(false)} onOk={() => setUserShow(false)}>
                 <UserList users={users} onUserAdd={onUserAdd} onUserDelete={onUserDelete} buildingId={building.id} roomAndStage={roomAndStage} />
             </Modal>
         </BuildContainer>

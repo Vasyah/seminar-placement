@@ -16,17 +16,9 @@ const Building: React.FunctionComponent<IBuildingProps> = ({ id, title, users })
     const changeShowModal = () => setShowModal((prev) => !prev);
     return (
         <>
-            <BuildingWrapper onClick={changeShowModal}>
-                <Badge.Ribbon text={title} color="volcano">
-                    <img src="/house.png" alt="" width={buildingSize} height={buildingSize} />
-                </Badge.Ribbon>
-            </BuildingWrapper>
 
-            {showModal && (
-                <Modal className="buildingInfo-modal" destroyOnClose keyboard open={showModal} onOk={changeShowModal} onCancel={changeShowModal}>
-                    <BuildingInfo id={id} users={users} />
-                </Modal>
-            )}
+            <BuildingInfo id={id} users={users} />
+
         </>
     );
 };
