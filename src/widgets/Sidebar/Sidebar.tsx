@@ -1,11 +1,9 @@
-import React, { PropsWithChildren } from "react";
+import React, { PropsWithChildren } from 'react';
 
 interface SidebarProps {
-	className?: string;
+    className?: string;
 }
 
-export const Sidebar: React.FC<PropsWithChildren<SidebarProps>> = ({
-	className,
-}: PropsWithChildren<SidebarProps>) => {
-	return <Sidebar>Content</Sidebar>;
+export const Sidebar: React.FC<PropsWithChildren<SidebarProps>> = ({ className }: PropsWithChildren<SidebarProps>) => {
+    return <Sidebar>Content</Sidebar>;
 };

@@ -1,13 +1,16 @@
 import { DeleteOutlined, UserAddOutlined } from '@ant-design/icons';
-import { Space, Table, TableProps, Tag } from 'antd';
+import { Space, Spin, Table, TableProps, Tag } from 'antd';
 import { IUser } from 'features/UserList/types';
 import * as React from 'react';
-import MyButton from '../../../../shared/components/MyButton/MyButton';
+import MyButton from 'shared/components/MyButton/MyButton';
+import { useListUsers } from 'shared/api/googleSheets';
 
 interface IUserTableProps {
     users: IUser[];
-    onUserAdd?: (id: string, ФИО: string) => void;
+    onUserAdd?: (id: string, ФИО: string, buildingId: number, stageId: number, roomId: number) => void;
     onUserDelete?: (id: string, ФИО: string) => void;
+    buildingId?: number;
+    roomAndStage?: { roomId: number; stageId: number } | null;
 }
 
 interface DataType {
@@ -21,7 +24,7 @@ interface DataType {
     user_id: string;
 }
 
-const UserTable: React.FunctionComponent<IUserTableProps> = ({ users, onUserAdd, onUserDelete }) => {
+const UserTable: React.FunctionComponent<IUserTableProps> = ({ users, onUserAdd, onUserDelete, buildingId, roomAndStage }) => {
     const columns: TableProps<DataType>['columns'] = [
         {
             title: 'ФИО',
@@ -86,7 +89,7 @@ const UserTable: React.FunctionComponent<IUserTableProps> = ({ users, onUserAdd,
                                 onClick: (event) => {
                                     event.stopPropagation();
 
-                                    onUserAdd(record.user_id, record.ФИО);
+                                    onUserAdd(record.user_id, record.ФИО, buildingId!, roomAndStage!.stageId, roomAndStage!.roomId);
                                 },
                                 icon: <UserAddOutlined />,
                             }}
@@ -110,6 +113,7 @@ const UserTable: React.FunctionComponent<IUserTableProps> = ({ users, onUserAdd,
     ];
     const getData = (users: IUser[]) =>
         users.map(({ ФИО, Город, Телефон, Корпус, Этаж, Комната, user_id }) => ({
+            key: ФИО + user_id,
             ФИО,
             Город,
             Телефон,
