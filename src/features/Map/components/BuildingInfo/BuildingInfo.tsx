@@ -11,6 +11,7 @@ import { BuildingEnums, BUILDINGS_INFO } from 'features/UserList/mock';
 import MyButton from 'shared/components/MyButton/MyButton';
 import { UserList } from 'features/UserList/UserList';
 import { useUpdateUserAccomodation } from 'shared/api/googleSheets';
+import Rooms from 'features/Map/Rooms/Rooms';
 
 export interface IBuildingInfoProps {
     id: number;
@@ -127,8 +128,9 @@ const BuildingInfo: React.FunctionComponent<IBuildingInfoProps> = ({ id, users }
                 isFull={building.isFull}
             />
             <Collapse collapsible="icon" defaultActiveKey={['1']} items={stageInfo} />
-            <Rooms
-                <Modal width={1024} open={userShow} keyboard onCancel={() => setUserShow(false)} onOk={() => setUserShow(false)}>
+            <Rooms rooms={getRooms(building.stages)} users={users} />
+
+            <Modal width={1024} open={userShow} keyboard onCancel={() => setUserShow(false)} onOk={() => setUserShow(false)}>
                 <UserList users={users} onUserAdd={onUserAdd} onUserDelete={onUserDelete} buildingId={building.id} roomAndStage={roomAndStage} />
             </Modal>
         </BuildContainer>

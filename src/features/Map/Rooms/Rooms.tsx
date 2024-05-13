@@ -1,10 +1,11 @@
 import { DeleteOutlined, UserAddOutlined } from '@ant-design/icons';
-import { Space, Spin, Table, TableProps, Tag } from 'antd';
+import { Select, Space, Spin, Table, TableProps, Tag } from 'antd';
 import { IUser } from 'features/UserList/types';
 import * as React from 'react';
 import MyButton from 'shared/components/MyButton/MyButton';
 import { useListUsers } from 'shared/api/googleSheets';
 import { IRoom } from '../types';
+import { useState } from 'react';
 
 interface IUserTableProps {
     rooms: IRoom[]
@@ -16,8 +17,10 @@ interface IUserTableProps {
 }
 
 interface DataType {
+    key: React.Key;
     Комната: string;
     Участники: IUser[];
+    // places: number;
 }
 
 const Rooms: React.FunctionComponent<IUserTableProps> = ({ users, rooms, onUserAdd, onUserDelete, buildingId, roomAndStage }) => {
@@ -26,26 +29,38 @@ const Rooms: React.FunctionComponent<IUserTableProps> = ({ users, rooms, onUserA
             title: 'Комната',
             dataIndex: 'Комната',
             key: 'Комната',
-            render: (text) => <a>{text}</a>,
         },
         {
             title: 'Участники',
             dataIndex: 'Участники',
             key: 'Участники',
+            render: (roomUsers: IUser[]) => {
+                const getOptions = (users: IUser[]) => users.map(({ user_id, ФИО }) => ({ value: user_id + ФИО, label: ФИО }))
+
+                // const [value, setValue] = useState(() => getOptions(roomUsers))
+                const options = getOptions(users)
+
+
+                return (
+                    <div>
+                        <Select showSearch options={options} style={{ minWidth: 700 }} mode="tags" value={getOptions(roomUsers)} />
+                    </div>
+                );
+            }
         },
 
     ];
-    const getData = (rooms: IRoom[]) =>
-        rooms.map(({ ФИО, Город, Телефон, Корпус, Этаж, Комната, user_id }) => ({
-            key: ФИО + user_id,
-            ФИО,
-            Город,
-            Телефон,
-            user_id,
+    const getData = (rooms: IRoom[]): DataType[] =>
+        rooms.map(({ users, id, places }) => ({
+            key: id,
+            // places: places,
+            'Участники': users,
+            'Комната': String(id),
         }));
-    const data = getData(users);
+
+    const data = getData(rooms);
 
     return <Table columns={columns} dataSource={data} style={{ width: '100%' }} size={'large'} />;
 };
 
-export default UserTable;
+export default Rooms;
