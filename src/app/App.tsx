@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { Breadcrumb, FloatButton, Layout, Menu, MenuProps, Modal, Spin, theme } from 'antd';
 
-import { DesktopOutlined, FileOutlined, PieChartOutlined, TeamOutlined, UserOutlined, UsergroupAddOutlined } from '@ant-design/icons';
+import { DesktopOutlined, FileOutlined, PieChartOutlined, TeamOutlined, UserOutlined, UsergroupAddOutlined, UserAddOutlined, FilePdfOutlined } from '@ant-design/icons';
 import { USERS_MOCK } from 'features/UserList/mock';
 import { IUser } from 'features/UserList/types';
 import Building from 'shared/components/building/Building';
 import { UserList } from 'features/UserList/UserList';
 import { QueryClient } from '@tanstack/react-query';
 import { useListUsers } from '../shared/api/googleSheets';
+import MyButton from '../shared/components/MyButton/MyButton';
+import { downloadGeneralInfoReport } from '../services/pdf/GenerateList';
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -94,6 +96,15 @@ export const App = () => {
                     <Header style={{ padding: 0, background: colorBgContainer }} />
                     <Content style={{ margin: '0 16px' }}>
                         <Breadcrumb items={[{ title: 'User' }, { title: 'Bill' }]} style={{ margin: '16px 0' }} />
+                        <MyButton
+                            tooltipProps={{ title: 'Скачать список участников' }}
+                            buttonProps={{
+                                onClick: async () => {
+                                    await downloadGeneralInfoReport(users);
+                                },
+                                icon: <FilePdfOutlined />,
+                            }}
+                        />
                         <div
                             style={{
                                 padding: 24,
