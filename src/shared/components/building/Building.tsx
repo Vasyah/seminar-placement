@@ -10,14 +10,14 @@ interface IBuildingProps {
     users: IUser[];
 }
 
-const Building: React.FunctionComponent<IBuildingProps> = ({ id, title, users }) => {
+const Building: React.FunctionComponent<IBuildingProps> = ({ id, title, users}) => {
     const [showModal, setShowModal] = React.useState(false);
 
     const changeShowModal = () => setShowModal((prev) => !prev);
     return (
         <>
 
-            <BuildingInfo id={id} users={users} />
+            <BuildingInfo id={id} users={users}/>
 
         </>
     );

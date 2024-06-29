@@ -45,7 +45,6 @@ interface UserAccomodation {
     user_id: string;
     ФИО: string;
     Корпус?: number;
-    Этаж?: number;
     Комната?: number;
 }
 

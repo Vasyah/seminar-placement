@@ -6,7 +6,7 @@ import UserTable from './components/UsersTable/UsersTable';
 interface userListProps {
     className?: string;
     users: IUser[];
-    onUserAdd?: (id: string, ФИО: string, buildingId: number, stageId: number, roomId: number) => void;
+    onUserAdd?: (id: string, ФИО: string, buildingId: number, roomId: number) => void;
     onUserDelete?: (id: string, ФИО: string) => void;
     buildingId?: number;
     roomAndStage?: { roomId: number; stageId: number } | null;
@@ -34,7 +34,7 @@ export const UserList: React.FC<PropsWithChildren<userListProps>> = ({ users = [
         }
     };
 
-    const getTabContent = () =>
+const getTabContent = () =>
         ['Все участники', 'Заселённые', 'Незаселённые'].map((tabName, idx) => ({
             label: tabName,
             key: String(idx),

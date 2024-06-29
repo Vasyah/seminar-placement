@@ -7,7 +7,7 @@ import { useListUsers } from 'shared/api/googleSheets';
 
 interface IUserTableProps {
     users: IUser[];
-    onUserAdd?: (id: string, ФИО: string, buildingId: number, stageId: number, roomId: number) => void;
+    onUserAdd?: (id: string, ФИО: string, buildingId: number, roomId: number) => void;
     onUserDelete?: (id: string, ФИО: string) => void;
     buildingId?: number;
     roomAndStage?: { roomId: number; stageId: number } | null;
@@ -82,19 +82,19 @@ const UserTable: React.FunctionComponent<IUserTableProps> = ({ users, onUserAdd,
             key: 'action',
             render: (_, record) => (
                 <Space size="middle">
-                    {onUserAdd && (
+                    
                         <MyButton
                             tooltipProps={{ title: 'Добавить участника' }}
                             buttonProps={{
                                 onClick: (event) => {
                                     event.stopPropagation();
 
-                                    onUserAdd(record.user_id, record.ФИО, buildingId!, roomAndStage!.stageId, roomAndStage!.roomId);
+                                    onUserAdd(record.user_id, record.ФИО, buildingId!, roomAndStage!.roomId);
                                 },
                                 icon: <UserAddOutlined />,
                             }}
                         />
-                    )}
+                    
                     {onUserDelete && !record.status.includes('Заселён') && (
                         <MyButton
                             tooltipProps={{ title: 'Выселить участника' }}

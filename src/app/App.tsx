@@ -75,11 +75,13 @@ export const App = () => {
     const {
         token: { colorBgContainer, borderRadiusLG },
     } = theme.useToken();
+
     useEffect(() => {
         if (usersData.isFetched) {
             setUsers(usersData.data);
         }
     }, [usersData]);
+
     if (usersData.isLoading || usersData.isError) {
         return <Spin tip="Loading..." size="large" fullscreen />;
     }
