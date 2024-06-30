@@ -1,12 +1,11 @@
-import { DeleteOutlined, UserAddOutlined } from '@ant-design/icons';
-import { Select, SelectProps, Space, Spin, Table, TableProps, Tag, Tooltip } from 'antd';
+import { DeleteOutlined, QuestionCircleOutlined, UserAddOutlined } from '@ant-design/icons';
+import { Descriptions, DescriptionsProps, Flex, Select, SelectProps, Space, Spin, Table, TableProps, Tag, Tooltip, Typography } from 'antd';
 import { IUser } from 'features/UserList/types';
 import * as React from 'react';
-import MyButton from 'shared/components/MyButton/MyButton';
-import { useListUsers } from 'shared/api/googleSheets';
 import { IRoom } from '../types';
-import { useState } from 'react';
+import { useCallback } from 'react';
 import { EncryptedId, Encrypter } from 'shared/utils/encryptUserId.ts/encryptUserId';
+import styled from 'styled-components';
 
 type TagRender = SelectProps['tagRender'];
 interface IUserTableProps {
@@ -18,12 +17,7 @@ interface IUserTableProps {
     roomAndStage?: { roomId: number; stageId: number } | null;
 }
 
-interface DataType {
-    key: React.Key;
-    Комната: string;
-    Участники: IUser[];
-    // places: number;
-}
+type RoomTableType = { key: React.Key } & IRoom;
 
 interface IRoomUserOption {
     value: string;
@@ -33,24 +27,29 @@ interface IRoomUserOption {
 }
 
 const Rooms: React.FunctionComponent<IUserTableProps> = ({ users, rooms, onUserAdd, onUserDelete, buildingId }) => {
-    const columns: TableProps<DataType>['columns'] = [
+    const getOptions = useCallback((users: IUser[]): IRoomUserOption[] => users.map(({ user_id, ФИО, Город }) => ({ value: Encrypter.encodeId(user_id, ФИО), label: ФИО, Город, id: user_id })), []);
+
+    const columns: TableProps<RoomTableType>['columns'] = [
         {
             title: 'Комната',
-            dataIndex: 'Комната',
-            key: 'Комната',
+            dataIndex: 'id',
+            key: 'id',
+            render: (id, data) => {
+                return (
+                    <Typography.Title style={{ margin: '0!important' }} level={5}>
+                        {id}
+                    </Typography.Title>
+                );
+            },
         },
         {
             title: 'Участники',
-            dataIndex: 'Участники',
-            key: 'Участники',
+            dataIndex: 'users',
+            key: 'users',
             render: (roomUsers: IUser[], data) => {
-                const getOptions = (users: IUser[]): IRoomUserOption[] => users.map(({ user_id, ФИО, Город }) => ({ value: Encrypter.encodeId(user_id, ФИО), label: ФИО, Город, id: user_id }));
-
-             
-                
-                // const [value, setValue] = useState(() => getOptions(roomUsers))
                 const options = getOptions(users);
-   console.log('new options',options);
+                console.log({ buildingId, users, options });
+
                 // для предотвращения открытия select при взаимодействии с tags
                 const onPreventMouseDown = (event: React.MouseEvent<HTMLSpanElement>) => {
                     event.preventDefault();
@@ -63,52 +62,85 @@ const Rooms: React.FunctionComponent<IUserTableProps> = ({ users, rooms, onUserA
                     return users.find((user) => +user.user_id === id) as IUser;
                 };
 
-                const tagRander: TagRender = ({ label, value, id }: IRoomUserOption) => {
+                const tagRander: TagRender = ({ label: ФИО, value, id }: IRoomUserOption) => {
                     const user = getUser(value);
 
                     const onClose = () => {
                         if (onUserDelete) {
-                            onUserDelete(id, label);
+                            onUserDelete(id, ФИО);
                         }
                     };
 
                     const getAdditionInfo = (user: IUser) => {
                         return (
                             <div>
-                                <p>Город: {user.Город}</p>
-                                <p>Телефон: {user.Телефон}</p>
+                                <StyledParagraph>Город: {user.Город}</StyledParagraph>
+                                <StyledParagraph>Телефон: {user.Телефон}</StyledParagraph>
                             </div>
                         );
                     };
 
-                    if (user)
+                    if (user) {
                         return (
                             <Tag color="blue" key={value} closable onClose={onClose}>
                                 <Tooltip placement={'top'} title={getAdditionInfo(user)}>
-                                    {label} {user?.Город}
+                                    {ФИО} {user?.Город}
                                 </Tooltip>
                             </Tag>
                         );
+                    }
                 };
 
                 const onChange = async (users: string[]) => {
-                    console.log(users);
+                    const encryptedRoomUsers = getOptions(roomUsers).map((user) => user.value);
 
-                    const encryptedRoomUsers = getOptions(roomUsers).map(user => user.value)
+                    const difference = users.filter((id) => !encryptedRoomUsers.includes(id));
 
-                    const difference = users.filter(id => !encryptedRoomUsers.includes(id))
-
-                    if(difference.length === 1){
-
+                    if (difference.length === 1) {
                         const id = Encrypter.decodeId(difference[0]);
-                        const foundUser = getUser(String(id))
+                        const foundUser = getUser(String(id));
 
-                        onUserAdd?.(String(id),foundUser.ФИО, buildingId, +data.Комната );
+                        onUserAdd?.(String(id), foundUser.ФИО, buildingId, +data.id);
                     }
-                        
-              
                 };
 
+                const items: DescriptionsProps['items'] = [
+                    {
+                        key: '1',
+                        label: 'Всего мест',
+                        children: data.places,
+                    },
+                    {
+                        key: '2',
+                        label: 'Размещено',
+                        children: data.reservedPlaces,
+                    },
+                    {
+                        key: '3',
+                        label: 'Осталось',
+                        children: data.emptyPlaces,
+                    },
+                ];
+
+                const suffix = (
+                    <>
+                        <Typography.Text style={{ fontSize: '12px' }}>
+                            {data.emptyPlaces} / {data.places}
+                            <Tooltip
+                                title={
+                                    <>
+                                        <StyledParagraph>Всего мест: {data.places}</StyledParagraph>
+                                        <StyledParagraph>Осталось: {data.emptyPlaces}</StyledParagraph>
+                                        <StyledParagraph>Размещено: {data.reservedPlaces}</StyledParagraph>
+                                    </>
+                                }
+                            >
+                                &nbsp;
+                                <QuestionCircleOutlined />
+                            </Tooltip>
+                        </Typography.Text>
+                    </>
+                );
                 return (
                     <div>
                         <Select
@@ -120,6 +152,8 @@ const Rooms: React.FunctionComponent<IUserTableProps> = ({ users, rooms, onUserA
                             tagRender={tagRander}
                             onMouseDown={onPreventMouseDown}
                             onChange={onChange}
+                            maxCount={data.places}
+                            suffixIcon={suffix}
                         />
                     </div>
                 );
@@ -127,19 +161,21 @@ const Rooms: React.FunctionComponent<IUserTableProps> = ({ users, rooms, onUserA
         },
     ];
 
-    const getData = (rooms: IRoom[]): DataType[] =>
-        rooms.map(({ users, id, places }) => ({
-            key: id,
-            // places: places,
-            Участники: users,
-            Комната: String(id),
+    const getTableUsers = (rooms: IRoom[]): RoomTableType[] =>
+        rooms.map((room) => ({
+            key: +room.id,
+            ...room,
         }));
 
-        console.log('change data');
-        
-    const data = getData(rooms);
+    const tableUsers = getTableUsers(rooms);
 
-    return <Table columns={columns} dataSource={data} style={{ width: '100%' }} size={'large'} bordered />;
+    return <Table columns={columns} dataSource={tableUsers} style={{ width: '100%' }} size={'large'} bordered />;
 };
 
 export default Rooms;
+
+const StyledParagraph = styled(Typography.Paragraph)`
+    color: inherit;
+    margin: 0 !important;
+    padding: 0;
+`;

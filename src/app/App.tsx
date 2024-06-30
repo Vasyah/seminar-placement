@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Breadcrumb, FloatButton, Layout, Menu, MenuProps, Modal, Spin, theme } from 'antd';
+import { Alert, Breadcrumb, FloatButton, Layout, Menu, MenuProps, Modal, Spin, theme } from 'antd';
 
 import { DesktopOutlined, FileOutlined, PieChartOutlined, TeamOutlined, UserOutlined, UsergroupAddOutlined } from '@ant-design/icons';
-import { USERS_MOCK } from 'features/UserList/mock';
 import { IUser } from 'features/UserList/types';
-import Building from 'shared/components/building/Building';
 import { UserList } from 'features/UserList/UserList';
-import { QueryClient } from '@tanstack/react-query';
 import { useListUsers } from '../shared/api/googleSheets';
+import Building from 'features/Map/components/Building/Building';
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -82,9 +80,14 @@ export const App = () => {
         }
     }, [usersData]);
 
-    if (usersData.isLoading || usersData.isError) {
-        return <Spin tip="Loading..." size="large" fullscreen />;
+    if (usersData.isLoading) {
+        return <Spin tip="Загрузка..." size="large" fullscreen />;
     }
+
+    if (usersData.isError) {
+        return <Alert message="Ошибка загрузки участников. Обратитесь к Космическому администратору" type="error" />;
+    }
+
     return (
         <div className="App">
             <Layout style={{ minHeight: '100vh' }}>
@@ -104,8 +107,8 @@ export const App = () => {
                                 borderRadius: borderRadiusLG,
                             }}
                         >
-                            <Building id={1} title="1 Корпус" users={users} />
-                            <Building id={2} title="2 Корпус" users={users} />
+                            <Building id={1} users={users} />
+                            <Building id={2} users={users} />
                         </div>
                     </Content>
                     <Footer style={{ textAlign: 'center' }}>Ant Design ©{new Date().getFullYear()} Created by Ant UED</Footer>

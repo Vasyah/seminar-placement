@@ -8,26 +8,17 @@ export interface ISpaceInfo {
     isFull: boolean;
 }
 
-// ПЕРЕЕХАЛО В Room.tsx
 export interface IBuilding extends ISpaceInfo {
     id: number;
     title?: string;
     description?: ReactNode;
     users: IUser[];
-    stages: IStage[];
+    rooms: IRoom[];
 }
-// ПЕРЕЕХАЛО В Room.tsx
+
 export interface IRoom extends ISpaceInfo {
     id: number;
     title?: string;
     description?: string;
-    users: IUser[];
-}
-
-export interface IStage extends ISpaceInfo {
-    id: number;
-    title: string;
-    description?: string;
-    rooms: IRoom[];
     users: IUser[];
 }
