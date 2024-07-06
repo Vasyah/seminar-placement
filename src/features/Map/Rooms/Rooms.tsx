@@ -125,7 +125,7 @@ const Rooms: React.FunctionComponent<IUserTableProps> = ({ users, rooms, onUserA
                 const suffix = (
                     <>
                         <Typography.Text style={{ fontSize: '12px' }}>
-                            {data.emptyPlaces} / {data.places}
+                            {data.reservedPlaces} / {data.places}
                             <Tooltip
                                 title={
                                     <>
@@ -143,10 +143,10 @@ const Rooms: React.FunctionComponent<IUserTableProps> = ({ users, rooms, onUserA
                 );
                 return (
                     <div>
-                        <Select
+                        <StyledSelect
                             showSearch
                             options={options}
-                            style={{ minWidth: 700, maxWidth: 700 }}
+                            style={{ minWidth: 300, width: '100%' }}
                             mode="tags"
                             value={getOptions(roomUsers)}
                             tagRender={tagRander}
@@ -154,6 +154,7 @@ const Rooms: React.FunctionComponent<IUserTableProps> = ({ users, rooms, onUserA
                             onChange={onChange}
                             maxCount={data.places}
                             suffixIcon={suffix}
+                            placeholder={'Выберите участников'}
                         />
                     </div>
                 );
@@ -169,7 +170,7 @@ const Rooms: React.FunctionComponent<IUserTableProps> = ({ users, rooms, onUserA
 
     const tableUsers = getTableUsers(rooms);
 
-    return <Table columns={columns} dataSource={tableUsers} style={{ width: '100%' }} size={'large'} bordered />;
+    return <Table columns={columns} dataSource={tableUsers} style={{ width: '100%' }} size={'large'} bordered pagination={false} />;
 };
 
 export default Rooms;
@@ -178,4 +179,10 @@ const StyledParagraph = styled(Typography.Paragraph)`
     color: inherit;
     margin: 0 !important;
     padding: 0;
+`;
+
+const StyledSelect = styled(Select)`
+    .ant-select-selector {
+        padding-right: 48px !important;
+    }
 `;

@@ -41,7 +41,7 @@ const listUsers = () => {
     }
 };
 
-interface UserAccomodation {
+export interface UserAccomodation {
     user_id: string;
     ФИО: string;
     Корпус?: number;
