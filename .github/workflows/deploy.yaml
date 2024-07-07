@@ -1,21 +1,16 @@
-name: Deploy to GitHub Pages
+name: 'Setup  Node + PNPM + Install Dependencies'
+description: 'Setup  Node + PNPM + Install Dependencies'
+runs:
+    using: 'composite'
+    steps:
+        - uses: pnpm/action-setup@v2
+          with:
+              version: 8
+        - uses: actions/setup-node@v3
+          with:
+              node-version: 18
+              cache: 'pnpm'
 
-on:
-    push:
-        branches:
-            - main
-
-jobs:
-    build:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v3
-            - uses: pnpm/action-setup@v2.2.1
-              with:
-                  version: latest
-            - uses: actions/setup-node@v3
-              with:
-                  node-version: '20'
-            - run: pnpm install
-            - run: pnpm lint
-            - run: pnpm build
+        - name: 📦 Install Project Dependencies
+          run: pnpm install --frozen-lockfile
+          shell: bash
