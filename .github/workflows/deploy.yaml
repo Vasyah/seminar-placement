@@ -1,53 +1,23 @@
-name: CI
-
-# Set the event to pull request event and push event of the master branch
+name: pnpm Example Workflow
 on:
     push:
-        branches: [feature/ISSUE-10]
-    pull_request:
-        branches: [feature/ISSUE-10]
-
-permissions:
-    contents: write
 
 jobs:
-    CI:
-        runs-on: ubuntu-latest
+    build:
+        runs-on: ubuntu-22.04
+        strategy:
+            matrix:
+                node-version: [20]
         steps:
-            - name: Checkout code
-              uses: actions/checkout@v4
-
-            - name: Setup Node.js
-              uses: actions/setup-node@v3
-              with:
-                  node-version: 20
-
+            - uses: actions/checkout@v4
             - name: Install pnpm
-              uses: pnpm/action-setup@v2
-
+              uses: pnpm/action-setup@v4
+              with:
+                  version: 9
+            - name: Use Node.js ${{ matrix.node-version }}
+              uses: actions/setup-node@v4
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  cache: 'pnpm'
             - name: Install dependencies
               run: pnpm install
-
-            - name: lint
-              run: pnpm run lint
-
-            # The template does not contain test cases. If you need to use test cases, you can uncomment it
-            # - name: Test
-            #   run: pnpm run test
-
-            - name: Build
-              run: pnpm run build
-
-            - name: Upload build artifacts
-              uses: actions/upload-artifact@v3
-              with:
-                  name: dist
-                  path: ./dist
-
-            - name: Deploy to GitHub Pages
-              uses: peaceiris/actions-gh-pages@v3
-              # Only deploy when the push event of the master branch is triggered
-              if: github.ref == 'refs/heads/master'
-              with:
-                  github_token: ${{ secrets.GITHUB_TOKEN }}
-                  publish_dir: ./dist
