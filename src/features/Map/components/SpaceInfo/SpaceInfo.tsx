@@ -1,15 +1,15 @@
-import { Badge, BadgeProps, Typography } from 'antd';
+import { Badge, BadgeProps, Tag, Typography } from 'antd';
 import * as React from 'react';
 
 export interface ISpaceInfoProps {
     usersCount: number;
     isFull: boolean;
     buildingName: string;
-    totalText: React.ReactNode;
-    emptyText: React.ReactNode;
+    total: React.ReactNode;
+    reserved: React.ReactNode;
 }
 
-export default function SpaceInfo({ buildingName, emptyText, isFull, totalText, usersCount }: ISpaceInfoProps) {
+export default function SpaceInfo({ buildingName, reserved, isFull, total, usersCount }: ISpaceInfoProps) {
     const getExtraInfo = (usersCount: number, isFull: boolean, buildingName: string): { status: BadgeProps['status']; text: string } => {
         if (isFull) {
             return {
@@ -27,22 +27,12 @@ export default function SpaceInfo({ buildingName, emptyText, isFull, totalText, 
 
     const extraInfo = getExtraInfo(usersCount, isFull, buildingName);
     return (
-        <div
-            style={{
-                backgroundColor: 'white',
-                padding: '0.5rem 1rem',
-                borderRadius: '0.5rem',
-            }}
-        >
+        <div style={{ marginBottom: '1rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <Badge status={extraInfo.status} />
-                <Typography.Title level={5} style={{ margin: 0 }}>
-                    {extraInfo.text}
-                </Typography.Title>
+                <Tag color={extraInfo.status} style={{ fontSize: '16px' }}>
+                    Заселено {reserved} из {total}
+                </Tag>
             </div>
-
-            {totalText}
-            {emptyText}
         </div>
     );
 }

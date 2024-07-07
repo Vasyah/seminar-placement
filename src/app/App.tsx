@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Breadcrumb, FloatButton, Layout, Menu, MenuProps, Modal, Spin, theme } from 'antd';
+import { Alert, Breadcrumb, Col, FloatButton, Layout, Menu, MenuProps, Modal, Row, Spin, theme } from 'antd';
 
 import { DesktopOutlined, FileOutlined, PieChartOutlined, TeamOutlined, UserOutlined, UsergroupAddOutlined } from '@ant-design/icons';
-import { USERS_MOCK } from 'features/UserList/mock';
 import { IUser } from 'features/UserList/types';
-import Building from 'shared/components/building/Building';
 import { UserList } from 'features/UserList/UserList';
-import { QueryClient } from '@tanstack/react-query';
-import { useListUsers } from '../shared/api/googleSheets';
+import { useListUsers, useUpdateUserAccomodation } from '../shared/api/googleSheets';
+import Building from 'features/Map/components/Building/Building';
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -22,50 +20,7 @@ function getItem(label: React.ReactNode, key: React.Key, icon?: React.ReactNode,
     } as MenuItem;
 }
 
-const items: MenuItem[] = [
-    getItem('Option 1', '1', <PieChartOutlined />),
-    getItem('Option 2', '2', <DesktopOutlined />),
-    getItem('User', 'sub1', <UserOutlined />, [getItem('Tom', '3'), getItem('Bill', '4'), getItem('Alex', '5')]),
-    getItem('Team', 'sub2', <TeamOutlined />, [getItem('Team 1', '6'), getItem('Team 2', '8')]),
-    getItem('Files', '9', <FileOutlined />),
-];
-
-const headerStyle: React.CSSProperties = {
-    textAlign: 'center',
-    color: '#fff',
-    height: 64,
-    paddingInline: 48,
-    lineHeight: '64px',
-    backgroundColor: '#4096ff',
-};
-
-const contentStyle: React.CSSProperties = {
-    textAlign: 'center',
-    minHeight: 120,
-    lineHeight: '120px',
-    color: '#fff',
-    backgroundColor: '#0958d9',
-};
-
-const siderStyle: React.CSSProperties = {
-    textAlign: 'center',
-    lineHeight: '120px',
-    color: '#fff',
-    backgroundColor: '#1677ff',
-};
-
-const footerStyle: React.CSSProperties = {
-    textAlign: 'center',
-    color: '#fff',
-    backgroundColor: '#4096ff',
-};
-
-const layoutStyle = {
-    borderRadius: 8,
-    overflow: 'hidden',
-    width: '100%',
-    maxWidth: '100%',
-};
+const items: MenuItem[] = [getItem('Главная', '1', <PieChartOutlined />), getItem('Заселение', '2', <DesktopOutlined />)];
 
 export const App = () => {
     const usersData = useListUsers();
@@ -75,25 +30,31 @@ export const App = () => {
     const {
         token: { colorBgContainer, borderRadiusLG },
     } = theme.useToken();
+    const { updateUserAccomodation, isUpdating } = useUpdateUserAccomodation();
     useEffect(() => {
         if (usersData.isFetched) {
             setUsers(usersData.data);
         }
     }, [usersData]);
-    if (usersData.isLoading || usersData.isError) {
-        return <Spin tip="Loading..." size="large" fullscreen />;
+
+    if (usersData.isLoading) {
+        return <Spin tip="Загрузка..." size="large" fullscreen />;
     }
+
+    if (usersData.isError) {
+        return <Alert message="Ошибка загрузки участников. Обратитесь к Космическому администратору" type="error" />;
+    }
+
     return (
         <div className="App">
             <Layout style={{ minHeight: '100vh' }}>
-                <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
+                <Header style={{ display: 'flex', alignItems: 'center' }}>
                     <div className="demo-logo-vertical" />
-                    <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items} />
-                </Sider>
+                    <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['2']} items={items} style={{ flex: 1, minWidth: 0 }} />
+                </Header>
                 <Layout>
                     <Header style={{ padding: 0, background: colorBgContainer }} />
                     <Content style={{ margin: '0 16px' }}>
-                        <Breadcrumb items={[{ title: 'User' }, { title: 'Bill' }]} style={{ margin: '16px 0' }} />
                         <div
                             style={{
                                 padding: 24,
@@ -102,11 +63,20 @@ export const App = () => {
                                 borderRadius: borderRadiusLG,
                             }}
                         >
-                            <Building id={1} title="1 Корпус" users={users} />
-                            <Building id={2} title="2 Корпус" users={users} />
+                            <Spin spinning={isUpdating} tip="Загрузка...">
+                                <Row wrap={false}>
+                                    <Col span={12}>
+                                        <Building id={1} users={users} updateUser={updateUserAccomodation} isUpdating={isUpdating} />
+                                    </Col>
+                                    <Col span={12}>
+                                        <Building id={2} users={users} updateUser={updateUserAccomodation} isUpdating={isUpdating} />
+                                    </Col>
+                                </Row>
+                            </Spin>
                         </div>
                     </Content>
-                    <Footer style={{ textAlign: 'center' }}>Ant Design ©{new Date().getFullYear()} Created by Ant UED</Footer>
+
+                    <Footer style={{ textAlign: 'center' }}>Космическая семья ©2024</Footer>
                     <FloatButton icon={<UsergroupAddOutlined />} type="primary" style={{ right: 24 }} onClick={() => setUserShow(true)} />
 
                     {userShow && (
