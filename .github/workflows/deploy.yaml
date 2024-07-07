@@ -9,7 +9,8 @@ jobs:
             matrix:
                 node-version: [20]
         steps:
-            - uses: actions/checkout@v4
+            - name: Checkout
+              uses: actions/checkout@v4
             - name: Install pnpm
               uses: pnpm/action-setup@v4
               with:
@@ -28,10 +29,8 @@ jobs:
               uses: actions/configure-pages@v3
             - name: Build with Jekyll
               uses: actions/jekyll-build-pages@v1
-                source: ./
-                destination: ./seminar-frontend
             - name: Upload GitHub Pages artifact
-            uses: actions/upload-pages-artifact@v1s
+              uses: actions/upload-pages-artifact@v1s
     deploy:
         permissions:
         contents: read
