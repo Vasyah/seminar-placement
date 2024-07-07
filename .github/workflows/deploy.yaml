@@ -3,9 +3,9 @@ name: CI
 # Set the event to pull request event and push event of the master branch
 on:
     push:
-        branches: [main]
+        branches: [feature/ISSUE-10]
     pull_request:
-        branches: [main]
+        branches: [feature/ISSUE-10]
 
 permissions:
     contents: write
