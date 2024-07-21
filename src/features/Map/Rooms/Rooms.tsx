@@ -1,19 +1,20 @@
-import { DeleteOutlined, QuestionCircleOutlined, UserAddOutlined } from '@ant-design/icons';
-import { Descriptions, DescriptionsProps, Flex, Select, SelectProps, Space, Spin, Table, TableProps, Tag, Tooltip, Typography } from 'antd';
+import { QuestionCircleOutlined } from '@ant-design/icons';
+import { Select, SelectProps, Table, TableProps, Tag, Tooltip, Typography } from 'antd';
 import { IUser } from 'features/UserList/types';
 import * as React from 'react';
 import { IRoom } from '../types';
 import { useCallback } from 'react';
 import { EncryptedId, Encrypter } from 'shared/utils/encryptUserId.ts/encryptUserId';
 import styled from 'styled-components';
+import { BuildingIdType } from 'features/UserList/mock';
 
 type TagRender = SelectProps['tagRender'];
 interface IUserTableProps {
     rooms: IRoom[];
     users: IUser[];
-    onUserAdd?: (id: string, ФИО: string, buildingId: number, roomId: number) => void;
+    onUserAdd?: (id: string, ФИО: string, buildingId: BuildingIdType, roomId: number) => void;
     onUserDelete?: (id: string, ФИО: string) => void;
-    buildingId: number;
+    buildingId: BuildingIdType;
     roomAndStage?: { roomId: number; stageId: number } | null;
 }
 
@@ -27,14 +28,24 @@ interface IRoomUserOption {
 }
 
 const Rooms: React.FunctionComponent<IUserTableProps> = ({ users, rooms, onUserAdd, onUserDelete, buildingId }) => {
-    const getOptions = useCallback((users: IUser[]): IRoomUserOption[] => users.map(({ user_id, ФИО, Город }) => ({ value: Encrypter.encodeId(user_id, ФИО), label: ФИО, Город, id: user_id })), []);
+    const select = React.useRef(null);
+    const getOptions = useCallback(
+        (users: IUser[]): IRoomUserOption[] => users.map(({ user_id, ФИО, Город }) => ({ value: Encrypter.encodeId(user_id, ФИО), label: ФИО, Город, id: user_id })),
+        [users],
+    );
+
+    const closeSelect = () => {
+        if (select) {
+            select?.current?.blur();
+        }
+    };
 
     const columns: TableProps<RoomTableType>['columns'] = [
         {
             title: 'Комната',
             dataIndex: 'id',
             key: 'id',
-            render: (id, data) => {
+            render: (id) => {
                 return (
                     <Typography.Title style={{ margin: '0!important' }} level={5}>
                         {id}
@@ -48,10 +59,11 @@ const Rooms: React.FunctionComponent<IUserTableProps> = ({ users, rooms, onUserA
             key: 'users',
             render: (roomUsers: IUser[], data) => {
                 const options = getOptions(users);
-                console.log({ buildingId, users, options });
 
                 // для предотвращения открытия select при взаимодействии с tags
                 const onPreventMouseDown = (event: React.MouseEvent<HTMLSpanElement>) => {
+                    console.log('сука ебаная');
+
                     event.preventDefault();
                     event.stopPropagation();
                 };
@@ -62,12 +74,14 @@ const Rooms: React.FunctionComponent<IUserTableProps> = ({ users, rooms, onUserA
                     return users.find((user) => +user.user_id === id) as IUser;
                 };
 
-                const tagRander: TagRender = ({ label: ФИО, value, id }: IRoomUserOption) => {
+                const tagRander: TagRender = ({ value, label: ФИО }: IRoomUserOption) => {
                     const user = getUser(value);
 
                     const onClose = () => {
                         if (onUserDelete) {
-                            onUserDelete(id, ФИО);
+                            const id = Encrypter.decodeId(value);
+                            onUserDelete(String(id), ФИО);
+                            closeSelect();
                         }
                     };
 
@@ -82,7 +96,7 @@ const Rooms: React.FunctionComponent<IUserTableProps> = ({ users, rooms, onUserA
 
                     if (user) {
                         return (
-                            <Tag color="blue" key={value} closable onClose={onClose}>
+                            <Tag color="blue" key={value} closable onClose={onClose} onMouseDown={onPreventMouseDown}>
                                 <Tooltip placement={'top'} title={getAdditionInfo(user)}>
                                     {ФИО} {user?.Город}
                                 </Tooltip>
@@ -100,27 +114,11 @@ const Rooms: React.FunctionComponent<IUserTableProps> = ({ users, rooms, onUserA
                         const id = Encrypter.decodeId(difference[0]);
                         const foundUser = getUser(String(id));
 
+                        closeSelect();
+
                         onUserAdd?.(String(id), foundUser.ФИО, buildingId, +data.id);
                     }
                 };
-
-                const items: DescriptionsProps['items'] = [
-                    {
-                        key: '1',
-                        label: 'Всего мест',
-                        children: data.places,
-                    },
-                    {
-                        key: '2',
-                        label: 'Размещено',
-                        children: data.reservedPlaces,
-                    },
-                    {
-                        key: '3',
-                        label: 'Осталось',
-                        children: data.emptyPlaces,
-                    },
-                ];
 
                 const suffix = (
                     <>
@@ -144,13 +142,13 @@ const Rooms: React.FunctionComponent<IUserTableProps> = ({ users, rooms, onUserA
                 return (
                     <div>
                         <StyledSelect
+                            ref={select}
                             showSearch
                             options={options}
                             style={{ minWidth: 300, width: '100%' }}
                             mode="tags"
                             value={getOptions(roomUsers)}
                             tagRender={tagRander}
-                            onMouseDown={onPreventMouseDown}
                             onChange={onChange}
                             maxCount={data.places}
                             suffixIcon={suffix}
@@ -170,7 +168,7 @@ const Rooms: React.FunctionComponent<IUserTableProps> = ({ users, rooms, onUserA
 
     const tableUsers = getTableUsers(rooms);
 
-    return <Table columns={columns} dataSource={tableUsers} style={{ width: '100%' }} size={'large'} bordered pagination={false} />;
+    return <Table columns={columns} dataSource={tableUsers} style={{ width: '100%' }} size={'large'} bordered pagination={false} scroll={{ y: 500 }} />;
 };
 
 export default Rooms;
