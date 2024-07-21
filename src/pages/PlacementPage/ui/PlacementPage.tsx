@@ -1,32 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, Col, MenuProps, Row, Spin, theme } from 'antd';
+import { Alert, Col, Row, Spin } from 'antd';
 
-import { DesktopOutlined, FileOutlined, PieChartOutlined } from '@ant-design/icons';
 import { IUser } from 'features/UserList/types';
 import { useListUsers, useUpdateUserAccomodation } from 'shared/api/googleSheets';
 import Building from 'features/Map/components/Building/Building';
-
-type MenuItem = Required<MenuProps>['items'][number];
-
-function getItem(label: React.ReactNode, key: React.Key, icon?: React.ReactNode, children?: MenuItem[]): MenuItem {
-    return {
-        key,
-        icon,
-        children,
-        label,
-    } as MenuItem;
-}
-
-const items: MenuItem[] = [getItem('Главная', '1', <PieChartOutlined />), getItem('Заселение', '2', <DesktopOutlined />)];
+import { BUILDINGS_INFO } from 'features/UserList/mock';
 
 export const PlacementPage = () => {
     const usersData = useListUsers();
     const [users, setUsers] = useState<IUser[]>([]);
 
     const { updateUserAccomodation, isUpdating } = useUpdateUserAccomodation();
+
     useEffect(() => {
         if (usersData.isFetched) {
-            setUsers(usersData.data);
+            // const usersAdapted = usersData.data.map((data) => ({ ...data, Корпус: String(data.Корпус) }));
+            setUsers(usersAdapted);
         }
     }, [usersData]);
 
@@ -40,13 +29,12 @@ export const PlacementPage = () => {
 
     return (
         <Spin spinning={isUpdating} tip="Загрузка...">
-            <Row wrap={false}>
-                <Col span={12}>
-                    <Building id={1} users={users} updateUser={updateUserAccomodation} isUpdating={isUpdating} />
-                </Col>
-                <Col span={12}>
-                    <Building id={2} users={users} updateUser={updateUserAccomodation} isUpdating={isUpdating} />
-                </Col>
+            <Row wrap={true}>
+                {Object.values(BUILDINGS_INFO).map((building) => (
+                    <Col span={12} key={building.id}>
+                        <Building id={building.id} users={users} updateUser={updateUserAccomodation} isUpdating={isUpdating} />
+                    </Col>
+                ))}
             </Row>
         </Spin>
 

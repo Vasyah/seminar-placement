@@ -6,6 +6,7 @@ import { IRoom } from '../types';
 import { useCallback } from 'react';
 import { EncryptedId, Encrypter } from 'shared/utils/encryptUserId.ts/encryptUserId';
 import styled from 'styled-components';
+import { BuildingIdType } from 'features/UserList/mock';
 
 type TagRender = SelectProps['tagRender'];
 interface IUserTableProps {
@@ -13,7 +14,7 @@ interface IUserTableProps {
     users: IUser[];
     onUserAdd?: (id: string, ФИО: string, buildingId: number, roomId: number) => void;
     onUserDelete?: (id: string, ФИО: string) => void;
-    buildingId: number;
+    buildingId: BuildingIdType;
     roomAndStage?: { roomId: number; stageId: number } | null;
 }
 

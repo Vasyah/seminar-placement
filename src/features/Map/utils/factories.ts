@@ -1,14 +1,14 @@
-import { IRoomInfo } from './../../UserList/mock';
+import { BuildingIdType, IRoomInfo } from './../../UserList/mock';
 import { IRoom } from './../types/index';
 import * as React from 'react';
 import { IBuilding, ISpaceInfo } from 'features/Map/types';
 import { IUser } from 'features/UserList/types';
-import { BUILDINGS_INFO, BuildingEnums } from '../../UserList/mock';
+import { BUILDINGS_INFO, BuildingEnum } from '../../UserList/mock';
 
 export const createBuilding = (
     // все участники семинара
     users: IUser[],
-    buildingId: number,
+    buildingId: BuildingIdType,
     title: string,
     places: number,
 ): IBuilding => {
@@ -20,6 +20,7 @@ export const createBuilding = (
         BUILDINGS_INFO[buildingId]?.rooms.map(({ places, id: roomId }) => {
             const roomUsers = findUsersByRoom(buildingUsers, buildingId, roomId);
             const spaceInfo = createSpaceInfo(roomId, roomUsers, places);
+
             return { ...spaceInfo };
         }) ?? [];
 
@@ -33,10 +34,10 @@ export const createBuilding = (
 // Фабрика для создания информации о месте для сущностей Building, Stage, Room
 export function createSpaceInfo(
     // номер сущности - Корпус, Этаж, Комната
-    id: number,
+    id: BuildingIdType,
     users: IUser[],
     places: number,
-): ISpaceInfo & { id: number; users: IUser[] } {
+): ISpaceInfo & { id: BuildingIdType; users: IUser[] } {
     const reservedPlaces = users.length;
     const emptyPlaces = places - reservedPlaces;
 
@@ -50,6 +51,6 @@ export function createSpaceInfo(
     };
 }
 
-const findUsersByBuilding = (users: IUser[], buidingId: number) => users.filter((user) => user?.Корпус && +user?.Корпус === buidingId);
+const findUsersByBuilding = (users: IUser[], buidingId: BuildingIdType) => users.filter((user) => user?.Корпус && user?.Корпус === buidingId);
 
-const findUsersByRoom = (users: IUser[], buildingId: number, roomId: number) => users.filter((user) => user?.Корпус && +user?.Корпус === buildingId && user.Комната && +user.Комната === roomId);
+const findUsersByRoom = (users: IUser[], buildingId: BuildingIdType, roomId: number) => users.filter((user) => user?.Корпус && user?.Корпус === buildingId && user.Комната && +user.Комната === roomId);

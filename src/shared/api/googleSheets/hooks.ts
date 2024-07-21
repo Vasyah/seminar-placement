@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
+import { BuildingIdType } from 'features/UserList/mock';
 
 const URL = 'https://script.google.com/macros/s/AKfycby030zqjlqMfn0BoMGr-IItt6jpsWxkuaFkUuxY4ZWi1U-gFzU5o0D-PCL6uUaTnXV6/exec';
 export const createListUsersKey = () => ['users'];
@@ -44,7 +45,7 @@ const listUsers = () => {
 export interface UserAccomodation {
     user_id: string;
     ФИО: string;
-    Корпус?: number;
+    Корпус?: BuildingIdType;
     Комната?: number;
 }
 
