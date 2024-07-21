@@ -5,10 +5,14 @@ import { IUser } from 'features/UserList/types';
 import { useListUsers, useUpdateUserAccomodation } from 'shared/api/googleSheets';
 import Building from 'features/Map/components/Building/Building';
 import { BUILDINGS_INFO } from 'features/UserList/mock';
+import MyButton from 'shared/components/MyButton/MyButton';
+import { downloadGeneralInfoReport } from 'services/pdf/GenerateList';
+import { FilePdfOutlined } from '@ant-design/icons';
 
 export const PlacementPage = () => {
     const usersData = useListUsers();
     const [users, setUsers] = useState<IUser[]>([]);
+    const [isPDFLoading, setPDFLoading] = useState(false);
 
     const { updateUserAccomodation, isUpdating } = useUpdateUserAccomodation();
 
@@ -30,7 +34,21 @@ export const PlacementPage = () => {
 
     return (
         <>
-            <Spin spinning={isUpdating} tip="Загрузка..." size="large" fullscreen />
+            <Row justify={'end'}>
+                <Col>
+                    <MyButton
+                        tooltipProps={{ title: 'Скачать список участников' }}
+                        buttonProps={{
+                            onClick: async () => {
+                                setPDFLoading(true);
+                                await downloadGeneralInfoReport(users).then(() => setPDFLoading(false));
+                            },
+                            icon: <FilePdfOutlined />,
+                        }}
+                    />
+                </Col>
+            </Row>
+            <Spin spinning={isUpdating || isPDFLoading} tip="Загрузка..." size="large" fullscreen />
             <Row wrap={true}>
                 {Object.values(BUILDINGS_INFO).map((building) => (
                     <Col span={12} key={building.id}>
