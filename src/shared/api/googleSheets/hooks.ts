@@ -46,7 +46,7 @@ export interface UserAccomodation {
     user_id: string;
     ФИО: string;
     Корпус?: BuildingIdType;
-    Комната?: number;
+    Комната?: BuildingIdType;
 }
 
 const updateUserAccomodation = (accomodation: UserAccomodation) => {

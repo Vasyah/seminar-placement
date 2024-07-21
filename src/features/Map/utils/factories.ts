@@ -1,9 +1,8 @@
-import { BuildingIdType, IRoomInfo } from './../../UserList/mock';
+import { BuildingIdType, IRoomInfo, BUILDINGS_INFO, BuildingEnum } from './../../UserList/mock';
 import { IRoom } from './../types/index';
 import * as React from 'react';
 import { IBuilding, ISpaceInfo } from 'features/Map/types';
 import { IUser } from 'features/UserList/types';
-import { BUILDINGS_INFO, BuildingEnum } from '../../UserList/mock';
 
 export const createBuilding = (
     // все участники семинара
@@ -51,6 +50,7 @@ export function createSpaceInfo(
     };
 }
 
-const findUsersByBuilding = (users: IUser[], buidingId: BuildingIdType) => users.filter((user) => user?.Корпус && user?.Корпус === buidingId);
+const findUsersByBuilding = (users: IUser[], buidingId: BuildingIdType) => users.filter((user) => user?.Корпус && String(user?.Корпус) === String(buidingId));
 
-const findUsersByRoom = (users: IUser[], buildingId: BuildingIdType, roomId: number) => users.filter((user) => user?.Корпус && user?.Корпус === buildingId && user.Комната && +user.Комната === roomId);
+const findUsersByRoom = (users: IUser[], buildingId: BuildingIdType, roomId: number) =>
+    users.filter((user) => user?.Корпус && String(user?.Корпус) === buildingId && user.Комната && +user.Комната === roomId);

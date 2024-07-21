@@ -1,9 +1,7 @@
 import LoaderPage from 'pages/Loader/ui/LoaderPage';
 import React, { FC, Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
-import { routeConfig, routeConfigArray } from 'shared/config/routeConfig/routeConfig';
-// import { routeConfig } from 'shared/config/routeConfig/routeConfig';
-// import { LoaderPage } from 'pages/LoaderPage/LoaderPage';
+import { routeConfigArray } from 'shared/config/routeConfig/routeConfig';
 
 export type IAppRouter = Record<string, unknown>;
 

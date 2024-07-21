@@ -14,8 +14,7 @@ export const PlacementPage = () => {
 
     useEffect(() => {
         if (usersData.isFetched) {
-            // const usersAdapted = usersData.data.map((data) => ({ ...data, Корпус: String(data.Корпус) }));
-            setUsers(usersAdapted);
+            setUsers(usersData?.data);
         }
     }, [usersData]);
 
@@ -27,8 +26,11 @@ export const PlacementPage = () => {
         return <Alert message="Ошибка загрузки участников. Обратитесь к Космическому администратору" type="error" />;
     }
 
+    console.log(isUpdating);
+
     return (
-        <Spin spinning={isUpdating} tip="Загрузка...">
+        <>
+            <Spin spinning={isUpdating} tip="Загрузка..." size="large" fullscreen />
             <Row wrap={true}>
                 {Object.values(BUILDINGS_INFO).map((building) => (
                     <Col span={12} key={building.id}>
@@ -36,8 +38,7 @@ export const PlacementPage = () => {
                     </Col>
                 ))}
             </Row>
-        </Spin>
-
+        </>
         // <FloatButton icon={<UsergroupAddOutlined />} type="primary" style={{ right: 24 }} onClick={() => setUserShow(true)} />
 
         // {userShow && (

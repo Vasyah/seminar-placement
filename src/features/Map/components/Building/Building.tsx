@@ -1,11 +1,9 @@
-import { Modal, Spin } from 'antd';
 import { IUser } from 'features/UserList/types';
 import * as React from 'react';
 import styled from 'styled-components';
 import SpaceInfo from '../SpaceInfo/SpaceInfo';
 import { createBuilding } from '../../utils/factories';
 import { BuildingIdType, BUILDINGS_INFO } from 'features/UserList/mock';
-import { UserList } from 'features/UserList/UserList';
 import Rooms from 'features/Map/Rooms/Rooms';
 import { UseMutateAsyncFunction } from '@tanstack/react-query';
 import { UserAccomodation } from 'shared/api/googleSheets';
@@ -17,13 +15,10 @@ export interface IBuildingInfoProps {
     isUpdating: boolean;
 }
 
-const Building: React.FunctionComponent<IBuildingInfoProps> = ({ id, users, updateUser, isUpdating }) => {
-    console.log(BUILDINGS_INFO[id].places);
-
+const Building: React.FunctionComponent<IBuildingInfoProps> = ({ id, users, updateUser }) => {
     const building = React.useMemo(() => createBuilding(users, id, `${id} корпус`, BUILDINGS_INFO[id]?.places), [users]);
-    console.log('building', building);
 
-    const onUserAdd = async (id: string, ФИО: string, buildingId: BuildingIdType, roomId: number) => {
+    const onUserAdd = React.useCallback(async (id: string, ФИО: string, buildingId: BuildingIdType, roomId: number) => {
         await updateUser({
             user_id: id,
             ФИО: ФИО,
@@ -31,7 +26,7 @@ const Building: React.FunctionComponent<IBuildingInfoProps> = ({ id, users, upda
             Корпус: buildingId,
         }).then((r) => console.log(r));
         console.log(`Пользователь добавлен ${id} ${ФИО}`);
-    };
+    }, []);
 
     const onUserDelete = async (id: string, ФИО: string) => {
         await updateUser({ user_id: id, ФИО: ФИО }).then((r) => console.log(r));
