@@ -41,11 +41,11 @@ export const AppLayout: React.FC<PropsWithChildren> = ({ children }) => {
                     <Menu theme="dark" mode="horizontal" defaultSelectedKeys={[window.location.pathname]} items={items} style={{ flex: 1, minWidth: 0 }} onClick={navigateHandler} />
                 </Header>
                 <Layout>
-                    <Content style={{ margin: '0 16px' }}>
+                    <Content>
                         <div
                             style={{
                                 padding: 24,
-                                minHeight: 360,
+                                minHeight: 'calc(100vh - 96px)',
                                 background: colorBgContainer,
                                 borderRadius: borderRadiusLG,
                             }}
@@ -54,7 +54,7 @@ export const AppLayout: React.FC<PropsWithChildren> = ({ children }) => {
                         </div>
                     </Content>
 
-                    <Footer style={{ textAlign: 'center' }}>Космическая семья ©2024</Footer>
+                    <Footer style={{ textAlign: 'center', height: '32px', padding: '0.5rem' }}>Космическая семья ©2024</Footer>
                     {/* <FloatButton icon={<UsergroupAddOutlined />} type="primary" style={{ right: 24 }} onClick={() => setUserShow(true)} /> */}
 
                     {/* {userShow && (

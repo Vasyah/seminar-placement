@@ -34,16 +34,20 @@ export const PlacementPage = () => {
 
     return (
         <>
-            <MyButton
-                tooltipProps={{ title: 'Скачать список участников' }}
-                buttonProps={{
-                    onClick: async () => {
-                        setPDFLoading(true);
-                        await downloadGeneralInfoReport(users).then(() => setPDFLoading(false));
-                    },
-                    icon: <FilePdfOutlined />,
-                }}
-            />
+            <Row justify={'end'}>
+                <Col>
+                    <MyButton
+                        tooltipProps={{ title: 'Скачать список участников' }}
+                        buttonProps={{
+                            onClick: async () => {
+                                setPDFLoading(true);
+                                await downloadGeneralInfoReport(users).then(() => setPDFLoading(false));
+                            },
+                            icon: <FilePdfOutlined />,
+                        }}
+                    />
+                </Col>
+            </Row>
             <Spin spinning={isUpdating || isPDFLoading} tip="Загрузка..." size="large" fullscreen />
             <Row wrap={true}>
                 {Object.values(BUILDINGS_INFO).map((building) => (

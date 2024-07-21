@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { AppLayout } from './provider/Layout/ui/AppLayout';
 import { AppRouter } from './provider/Router/ui/AppRouter';
 
