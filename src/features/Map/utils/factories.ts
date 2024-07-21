@@ -1,12 +1,13 @@
+import { BuildingIdType, IRoomInfo, BUILDINGS_INFO, BuildingEnum } from './../../UserList/mock';
+import { IRoom } from './../types/index';
 import * as React from 'react';
-import { IBuilding, IRoom, ISpaceInfo, IStage } from 'features/Map/types';
+import { IBuilding, ISpaceInfo } from 'features/Map/types';
 import { IUser } from 'features/UserList/types';
-import { BUILDINGS_INFO, BuildingEnums } from '../../UserList/mock';
 
 export const createBuilding = (
     // все участники семинара
     users: IUser[],
-    buildingId: number,
+    buildingId: BuildingIdType,
     title: string,
     places: number,
 ): IBuilding => {
@@ -14,67 +15,28 @@ export const createBuilding = (
 
     const spaceInfo = createSpaceInfo(buildingId, buildingUsers, places);
 
-    const stages =
-        BUILDINGS_INFO[buildingId]?.stages.map(({ description, places, id, title }) => {
-            const stageUsers = findUsersByStage(buildingUsers, buildingId, id);
+    const rooms =
+        BUILDINGS_INFO[buildingId]?.rooms.map(({ places, id: roomId }) => {
+            const roomUsers = findUsersByRoom(buildingUsers, buildingId, roomId);
+            const spaceInfo = createSpaceInfo(roomId, roomUsers, places);
 
-            return createStage(stageUsers, buildingId, id, places, title, description);
+            return { ...spaceInfo };
         }) ?? [];
 
     return {
         ...spaceInfo,
-        stages,
+        rooms,
         title,
     };
 };
 
-export const createStage = (
-    // пользователи живущие на этаже
-    users: IUser[],
-    // номер корпуса
-    buildingId: number,
-    // номер этажа
-    stageId: number,
-    // количество мест на этаже
-    places: number,
-    title: string,
-    description?: string,
-): IStage => {
-    const spaceInfo = createSpaceInfo(stageId, users, places);
-
-    const stageInfo = BUILDINGS_INFO[buildingId].stages.find((stage) => stage.id === stageId);
-
-    if (!stageInfo) {
-        console.error(`Этаж ${stageId} в корпусе ${buildingId} не найден`);
-        throw new Error(`Этаж ${stageId} в корпусе ${buildingId} не найден`);
-        //TODO: добавить toaster
-    }
-
-    const rooms =
-        stageInfo?.rooms.map((room) => {
-            const roomUsers = findUsersByRoom(users, buildingId, stageId, room.id);
-            const spaceInfo = createSpaceInfo(room.id, roomUsers, room.places);
-            return {
-                ...spaceInfo,
-                title: `Комната №${room.id}`,
-                users: roomUsers,
-            };
-        }) ?? [];
-
-    return { ...spaceInfo, title, description, rooms, users };
-};
-
-export const createRoom = (id: number, users: IUser[], places: number): IRoom => {
-    return createSpaceInfo(id, users, places);
-};
-
-// Фабрика для информации о месте для сущностей Building, Stage, Room
+// Фабрика для создания информации о месте для сущностей Building, Stage, Room
 export function createSpaceInfo(
     // номер сущности - Корпус, Этаж, Комната
-    id: number,
+    id: BuildingIdType,
     users: IUser[],
     places: number,
-): ISpaceInfo & { id: number; users: IUser[] } {
+): ISpaceInfo & { id: BuildingIdType; users: IUser[] } {
     const reservedPlaces = users.length;
     const emptyPlaces = places - reservedPlaces;
 
@@ -88,9 +50,7 @@ export function createSpaceInfo(
     };
 }
 
-const findUsersByBuilding = (users: IUser[], building: number) => users.filter((user) => user?.Корпус && +user?.Корпус === building);
+const findUsersByBuilding = (users: IUser[], buidingId: BuildingIdType) => users.filter((user) => user?.Корпус && String(user?.Корпус) === String(buidingId));
 
-const findUsersByStage = (users: IUser[], building: number, stage: number) => users.filter((user) => user?.Корпус && +user?.Корпус === building && user?.Этаж && +user?.Этаж === stage);
-
-const findUsersByRoom = (users: IUser[], building: number, stage: number, room: number) =>
-    users.filter((user) => user?.Корпус && +user?.Корпус === building && user?.Этаж && +user?.Этаж === stage && user.Комната && +user.Комната === room);
+const findUsersByRoom = (users: IUser[], buildingId: BuildingIdType, roomId: number) =>
+    users.filter((user) => user?.Корпус && String(user?.Корпус) === buildingId && user.Комната && +user.Комната === roomId);

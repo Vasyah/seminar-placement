@@ -1,4 +1,5 @@
 export interface IUser {
+    // не уникальный, может меняться из-за сортировки
     row_id: number;
     ФИО: string;
     Телефон: string;
@@ -24,6 +25,7 @@ export interface IUser {
     'Общая сумма': string;
     'Время прибытия на станцию': string;
     'Информация по машине': string;
+    // не уникальынй, потому что может зарегаться несколько человек с одного телефона
     user_id: string;
     Корпус?: string;
     Этаж?: string;
