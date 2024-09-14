@@ -7,7 +7,7 @@ export interface IMyButtonProps {
     children?: React.ReactNode;
 }
 
-export default function MyButton({ buttonProps, children, tooltipProps }: IMyButtonProps) {
+export default function ButtonWithTooltip({ buttonProps, children, tooltipProps }: IMyButtonProps) {
     return (
         <Tooltip {...tooltipProps}>
             <Button {...buttonProps}>{children}</Button>
