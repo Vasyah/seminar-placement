@@ -42,5 +42,6 @@ module.exports = {
         '@typescript-eslint/no-unused-vars': ['warn'],
         'import/named': 'off',
         'react/display-name': 'warn',
+        'no-extra-boolean-cast': 'off',
     },
 };

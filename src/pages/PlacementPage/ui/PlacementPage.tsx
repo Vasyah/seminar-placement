@@ -22,7 +22,7 @@ export const PlacementPage = () => {
         }
     }, [usersData]);
 
-    if (usersData.isLoading) {
+    if (usersData.isLoading || isPDFLoading || isUpdating) {
         return <Spin tip="Загрузка..." size="large" fullscreen />;
     }
 
@@ -30,11 +30,9 @@ export const PlacementPage = () => {
         return <Alert message="Ошибка загрузки участников. Обратитесь к Космическому администратору" type="error" />;
     }
 
-    console.log(isUpdating);
-
     return (
         <>
-            <Row justify={'end'}>
+            <Row justify={'start'}>
                 <Col>
                     <MyButton
                         tooltipProps={{ title: 'Скачать список участников' }}
@@ -57,12 +55,5 @@ export const PlacementPage = () => {
                 ))}
             </Row>
         </>
-        // <FloatButton icon={<UsergroupAddOutlined />} type="primary" style={{ right: 24 }} onClick={() => setUserShow(true)} />
-
-        // {userShow && (
-        //     <Modal width={1024} open={userShow} keyboard onCancel={() => setUserShow(false)} onOk={() => setUserShow(false)}>
-        //         <UserList users={users} />
-        //     </Modal>
-        // )}
     );
 };
