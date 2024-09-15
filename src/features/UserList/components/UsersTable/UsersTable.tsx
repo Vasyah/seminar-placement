@@ -2,7 +2,7 @@ import { DeleteOutlined, UserAddOutlined } from '@ant-design/icons';
 import { Space, Spin, Table, TableProps, Tag } from 'antd';
 import { IUser } from 'features/UserList/types';
 import * as React from 'react';
-import MyButton from 'shared/components/MyButton/MyButton';
+import ButtonWithTooltip from 'shared/components/MyButton/MyButton';
 import { useListUsers } from 'shared/api/googleSheets';
 
 interface IUserTableProps {
@@ -82,21 +82,20 @@ const UserTable: React.FunctionComponent<IUserTableProps> = ({ users, onUserAdd,
             key: 'action',
             render: (_, record) => (
                 <Space size="middle">
-                    
-                        <MyButton
-                            tooltipProps={{ title: 'Добавить участника' }}
-                            buttonProps={{
-                                onClick: (event) => {
-                                    event.stopPropagation();
+                    <ButtonWithTooltip
+                        tooltipProps={{ title: 'Добавить участника' }}
+                        buttonProps={{
+                            onClick: (event) => {
+                                event.stopPropagation();
 
-                                    onUserAdd(record.user_id, record.ФИО, buildingId!, roomAndStage!.roomId);
-                                },
-                                icon: <UserAddOutlined />,
-                            }}
-                        />
-                    
+                                onUserAdd(record.user_id, record.ФИО, buildingId!, roomAndStage!.roomId);
+                            },
+                            icon: <UserAddOutlined />,
+                        }}
+                    />
+
                     {onUserDelete && !record.status.includes('Заселён') && (
-                        <MyButton
+                        <ButtonWithTooltip
                             tooltipProps={{ title: 'Выселить участника' }}
                             buttonProps={{
                                 onClick: (event) => {

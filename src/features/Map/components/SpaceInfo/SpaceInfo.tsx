@@ -1,5 +1,6 @@
 import { Badge, BadgeProps, Tag, Typography } from 'antd';
 import * as React from 'react';
+import { useMyToken } from 'shared/token/token';
 
 export interface ISpaceInfoProps {
     usersCount: number;
@@ -10,16 +11,17 @@ export interface ISpaceInfoProps {
 }
 
 export default function SpaceInfo({ buildingName, reserved, isFull, total, usersCount }: ISpaceInfoProps) {
-    const getExtraInfo = (usersCount: number, isFull: boolean, buildingName: string): { status: BadgeProps['status']; text: string } => {
+    const { token } = useMyToken();
+    const getExtraInfo = (usersCount: number, isFull: boolean, buildingName: string): { status: BadgeProps['status'] | string; text: string } => {
         if (isFull) {
             return {
-                status: 'success',
+                status: token.colorSuccess,
                 text: `${buildingName} заселён!`,
             };
         }
 
         if (usersCount > 0) {
-            return { status: 'processing', text: `${buildingName} заселяется` };
+            return { status: token.colorPrimary, text: `${buildingName} заселяется` };
         }
 
         return { status: 'default', text: `${buildingName} пустой` };
