@@ -95,7 +95,7 @@ export const BUILDINGS_INFO: Record<string, BuildingInfoType> = {
         ],
     },
     [BuildingEnum.Six]: {
-        id: 6,
+        id: BuildingEnum.Six,
         places: 48,
         rooms: [
             { id: 6103, places: 3 },

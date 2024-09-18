@@ -62,8 +62,6 @@ const Rooms: React.FunctionComponent<IUserTableProps> = ({ users, rooms, onUserA
 
                 // для предотвращения открытия select при взаимодействии с tags
                 const onPreventMouseDown = (event: React.MouseEvent<HTMLSpanElement>) => {
-                    console.log('сука ебаная');
-
                     event.preventDefault();
                     event.stopPropagation();
                 };
