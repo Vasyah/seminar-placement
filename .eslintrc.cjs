@@ -43,5 +43,6 @@ module.exports = {
         'import/named': 'off',
         'react/display-name': 'warn',
         'no-extra-boolean-cast': 'off',
+        'no-debugger': 'off',
     },
 };

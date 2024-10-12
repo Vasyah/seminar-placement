@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { IUser } from 'features/UserList/types';
-import { useListUsers, useUpdateUserAccomodation } from 'shared/api/googleSheets';
+import { useListUsers } from 'shared/api/googleSheets';
 import { Alert, Card, Col, Row, Spin, Statistic, Tooltip, theme } from 'antd';
 import { GoldOutlined, TeamOutlined, UsergroupAddOutlined } from '@ant-design/icons';
-import { SEMINAR_PRICE } from 'shared/utils/consts/consts';
+import { SEMINAR } from 'shared/utils/consts/consts';
 import { BarChart, Bar, Rectangle, XAxis, YAxis, CartesianGrid, Tooltip as RechartTooltip, Legend, ResponsiveContainer } from 'recharts';
 export const MainPage = () => {
     const usersData = useListUsers();
@@ -32,7 +32,7 @@ export const MainPage = () => {
             return (totalSum += +userPayment);
         }, 0);
 
-        return usersPayedSum / SEMINAR_PRICE;
+        return Math.floor(usersPayedSum / SEMINAR.PRICE);
     };
 
     const usersPayed = getPayedCount(users);
@@ -51,6 +51,7 @@ export const MainPage = () => {
     const graph = {
         height: 512,
     };
+
     return (
         <>
             <Row gutter={16}>

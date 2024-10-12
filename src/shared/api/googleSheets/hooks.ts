@@ -1,8 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { BuildingIdType } from 'features/UserList/mock';
+import { SEMINAR } from 'shared/utils/consts/consts';
 
-const URL = 'https://script.google.com/macros/s/AKfycby030zqjlqMfn0BoMGr-IItt6jpsWxkuaFkUuxY4ZWi1U-gFzU5o0D-PCL6uUaTnXV6/exec';
 export const createListUsersKey = () => ['users'];
 
 export const useListUsers = () => {
@@ -31,7 +31,7 @@ export function useUpdateUserAccomodation() {
 const listUsers = () => {
     try {
         return axios
-            .get(URL, {
+            .get(SEMINAR.URL, {
                 headers: {
                     'content-type': 'text/plain',
                 },
@@ -52,7 +52,7 @@ export interface UserAccomodation {
 const updateUserAccomodation = (accomodation: UserAccomodation) => {
     try {
         return axios
-            .post(URL, accomodation, {
+            .post(SEMINAR.URL, accomodation, {
                 headers: {
                     'content-type': 'text/plain',
                 },

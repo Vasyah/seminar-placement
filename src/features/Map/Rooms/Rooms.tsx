@@ -66,18 +66,18 @@ const Rooms: React.FunctionComponent<IUserTableProps> = ({ users, rooms, onUserA
                     event.stopPropagation();
                 };
 
-                const getUser = (encryptedId: EncryptedId): IUser => {
-                    const id = Encrypter.decodeId(encryptedId);
+                const getUser = (encryptedId: EncryptedId, ФИО: string): IUser => {
+                    const { id } = Encrypter.decodeId(encryptedId);
 
-                    return users.find((user) => +user.user_id === id) as IUser;
+                    return users.find((user) => +user.user_id === id && user?.ФИО === ФИО) as IUser;
                 };
 
                 const tagRander: TagRender = ({ value, label: ФИО }: IRoomUserOption) => {
-                    const user = getUser(value);
+                    const user = getUser(value, ФИО);
 
                     const onClose = () => {
                         if (onUserDelete) {
-                            const id = Encrypter.decodeId(value);
+                            const { id } = Encrypter.decodeId(value);
                             onUserDelete(String(id), ФИО);
                             closeSelect();
                         }
@@ -109,12 +109,17 @@ const Rooms: React.FunctionComponent<IUserTableProps> = ({ users, rooms, onUserA
                     const difference = users.filter((id) => !encryptedRoomUsers.includes(id));
 
                     if (difference.length === 1) {
-                        const id = Encrypter.decodeId(difference[0]);
-                        const foundUser = getUser(String(id));
+                        try {
+                            const { id, ФИО } = Encrypter.decodeId(difference[0]);
+                            const foundUser = getUser(String(id), ФИО);
 
-                        closeSelect();
+                            if (!foundUser) return;
+                            closeSelect();
 
-                        onUserAdd?.(String(id), foundUser.ФИО, buildingId, +data.id);
+                            onUserAdd?.(String(id), foundUser.ФИО, buildingId, +data.id);
+                        } catch (e) {
+                            console.error(e);
+                        }
                     }
                 };
 
@@ -151,6 +156,7 @@ const Rooms: React.FunctionComponent<IUserTableProps> = ({ users, rooms, onUserA
                             maxCount={data.places}
                             suffixIcon={suffix}
                             placeholder={'Выберите участников'}
+                            filterSort={(optionA, optionB) => (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())}
                         />
                     </div>
                 );
