@@ -32,7 +32,7 @@ export const PlacementPage = () => {
 
     return (
         <>
-            {/* <Row justify={'start'}>
+            <Row justify={'start'}>
                 <Col>
                     <ButtonWithTooltip
                         tooltipProps={{ title: 'Скачать список участников' }}
@@ -47,7 +47,7 @@ export const PlacementPage = () => {
                         Скачать список участников
                     </ButtonWithTooltip>
                 </Col>
-            </Row> */}
+            </Row>
             <Spin spinning={isUpdating || isPDFLoading} tip="Загрузка..." size="large" fullscreen />
             <Row wrap={true}>
                 {Object.values(BUILDINGS_INFO).map((building) => (

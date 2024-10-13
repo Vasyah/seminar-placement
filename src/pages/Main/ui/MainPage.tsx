@@ -69,7 +69,7 @@ export const MainPage = () => {
                     <Tooltip
                         overlayInnerStyle={{ maxHeight: '300px', overflowY: 'auto' }}
                         title={teachers.map((teacher) => (
-                            <p key={teacher.user_id} style={{ margin: '0.1rem 0' }}>
+                            <p key={teacher.user_id + teacher.ФИО} style={{ margin: '0.1rem 0' }}>
                                 {teacher.ФИО}
                             </p>
                         ))}

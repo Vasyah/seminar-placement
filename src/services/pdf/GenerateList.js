@@ -14,7 +14,7 @@ export async function downloadGeneralInfoReport(report) {
             return {
                 columns: [
                     {
-                        stack: [{ text: 'title' }],
+                        stack: [{ text: 'Расселение' }],
                         fontSize: 11,
                         bold: true,
                         alignment: 'center',
@@ -74,12 +74,12 @@ export function generateGeneralInfoPages(report) {
         const page = {
             content: {
                 table: {
-                    widths: [cmToPt(0.69), cmToPt(8), cmToPt(2.5), cmToPt(2.5), cmToPt(4.25), cmToPt(2), cmToPt(2)],
+                    widths: [cmToPt(0.69), cmToPt(8), cmToPt(2.5), cmToPt(2.5), cmToPt(4.25), cmToPt(2), cmToPt(2), cmToPt(2) ],
                     heights: [10, ...Array(sportsmanCountOnPage).fill(19)],
                     body: [
                         generateTableHeader(),
                         ...report.slice(i, i + sportsmanCountOnPage).map((sr, index) => generateSportsmanRow(sr, index + i + 1)),
-                        ...generateEmptyRows(report.length, i + sportsmanCountOnPage, 6),
+                        ...generateEmptyRows(report.length, i + sportsmanCountOnPage, 7),
                     ],
                 },
                 pageBreak: 'after',
@@ -133,6 +133,11 @@ function generateTableHeader() {
             style: 'columnTitle',
             margin: [10, 10, 10, 0],
         },
+        {
+            text: 'Номер стола',
+            style: 'columnTitle',
+            margin: [10, 10, 10, 0],
+        },
     ];
 }
 
@@ -144,15 +149,23 @@ function generateSportsmanRow(sportsmanRow, index) {
     //{ text: formattedSportsmanName, margin: formattedSportsmanName.length <= maxNameLength ? defaultMargin : longNameMargin },
     //{ text: sportsmanRow.birthday, margin: defaultMargin },
 
-    const formatDate = (birthday) => format(parseISO(birthday), 'dd.MM.yyyy');
-
     return [
         { text: index.toString(), style: 'rowNumber' },
         { text: sportsmanRow.ФИО, margin: longNameMargin },
         { text: sportsmanRow.Телефон, margin: defaultMargin },
-        { text: formatDate(sportsmanRow['Дата рождения']), margin: defaultMargin },
+        { text: formatDate(sportsmanRow['Дата рождения'], index), margin: defaultMargin },
         { text: sportsmanRow.Город, margin: defaultMargin },
         { text: sportsmanRow.Корпус, margin: defaultMargin },
         { text: sportsmanRow.Комната, margin: defaultMargin },
+        {}
     ];
+}
+
+const formatDate = (birthday, index) => {
+    try {
+        return format(parseISO(birthday), 'dd.MM.yyyy');
+    }
+    catch (e) {
+        console.log('Invalid format', birthday, ' ', index);
+    }
 }
