@@ -5,7 +5,7 @@ import { routeConfigArray } from 'shared/config/routeConfig/routeConfig';
 
 export type IAppRouter = Record<string, unknown>;
 
-export const AppRouter: FC<IAppRouter> = (props: IAppRouter) => (
+export const AppRouter: FC<IAppRouter> = (props: IAppRouter) => (   
     <Routes>
         {routeConfigArray.map(({ path, element }) => (
             <Route

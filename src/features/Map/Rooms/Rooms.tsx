@@ -3,12 +3,12 @@ import { Select, SelectProps, Table, TableProps, Tag, Tooltip, Typography } from
 import { IUser } from 'features/UserList/types';
 import * as React from 'react';
 import { IRoom } from '../types';
-import { useCallback } from 'react';
 import { EncryptedId, Encrypter } from 'shared/utils/encryptUserId.ts/encryptUserId';
-import styled from 'styled-components';
 import { BuildingIdType } from 'features/UserList/mock';
+import { IRoomUserOption } from 'pages/PlacementPage/types';
 
 type TagRender = SelectProps['tagRender'];
+
 interface IUserTableProps {
     rooms: IRoom[];
     users: IUser[];
@@ -16,23 +16,14 @@ interface IUserTableProps {
     onUserDelete?: (id: string, ФИО: string) => void;
     buildingId: BuildingIdType;
     roomAndStage?: { roomId: number; stageId: number } | null;
+    getOptions: (users: IUser[]) => IRoomUserOption[];
 }
 
 type RoomTableType = { key: React.Key } & IRoom;
 
-interface IRoomUserOption {
-    value: string;
-    label: string;
-    Город: string;
-    id: string;
-}
-
-const Rooms: React.FunctionComponent<IUserTableProps> = ({ users, rooms, onUserAdd, onUserDelete, buildingId }) => {
+const Rooms: React.FunctionComponent<IUserTableProps> = ({ users, rooms, onUserAdd, onUserDelete, buildingId, getOptions }) => {
     const select = React.useRef(null);
-    const getOptions = useCallback(
-        (users: IUser[]): IRoomUserOption[] => users.map(({ user_id, ФИО, Город }) => ({ value: Encrypter.encodeId(user_id, ФИО), label: ФИО, Город, id: user_id })),
-        [users],
-    );
+
 
     const closeSelect = () => {
         if (select) {
@@ -52,6 +43,7 @@ const Rooms: React.FunctionComponent<IUserTableProps> = ({ users, rooms, onUserA
                     </Typography.Title>
                 );
             },
+            width: 150
         },
         {
             title: 'Участники',
@@ -114,7 +106,7 @@ const Rooms: React.FunctionComponent<IUserTableProps> = ({ users, rooms, onUserA
                             const foundUser = getUser(String(id), ФИО);
 
                             if (!foundUser) return;
-                            closeSelect();
+                            // closeSelect();
 
                             onUserAdd?.(String(id), foundUser.ФИО, buildingId, +data.id);
                         } catch (e) {

@@ -1,4 +1,4 @@
-import { Badge, BadgeProps, Tag, Typography } from 'antd';
+import { BadgeProps, Tag } from 'antd';
 import * as React from 'react';
 import { useMyToken } from 'shared/token/token';
 

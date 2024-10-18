@@ -1,5 +1,4 @@
-import { BuildingIdType, IRoomInfo, BUILDINGS_INFO, BuildingEnum } from './../../UserList/mock';
-import { IRoom } from './../types/index';
+import { BuildingIdType, BUILDINGS_INFO } from './../../UserList/mock';
 import * as React from 'react';
 import { IBuilding, ISpaceInfo } from 'features/Map/types';
 import { IUser } from 'features/UserList/types';
