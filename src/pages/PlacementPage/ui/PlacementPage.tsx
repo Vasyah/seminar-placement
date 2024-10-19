@@ -17,7 +17,11 @@ export const PlacementPage = () => {
     const [isPDFLoading, setPDFLoading] = useState(false);
 
     const { updateUserAccomodation, isUpdating } = useUpdateUserAccomodation();
-
+    
+    const getOptions = useCallback(
+        (users: IUser[]): IRoomUserOption[] => users.map(({ user_id, ФИО, Город }) => ({ value: Encrypter.encodeId(user_id, ФИО), label: ФИО, Город, id: user_id })),
+        [],
+    );
     useEffect(() => {
         if (usersData.isFetched) {
             setUsers(usersData?.data);
@@ -32,10 +36,7 @@ export const PlacementPage = () => {
         return <Alert message="Ошибка загрузки участников. Обратитесь к Космическому администратору" type="error" />;
     }
 
-    const getOptions = useCallback(
-        (users: IUser[]): IRoomUserOption[] => users.map(({ user_id, ФИО, Город }) => ({ value: Encrypter.encodeId(user_id, ФИО), label: ФИО, Город, id: user_id })),
-        [users],
-    );
+
     
     return (
         <>

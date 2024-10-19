@@ -6,6 +6,7 @@ import { IRoom } from '../types';
 import { EncryptedId, Encrypter } from 'shared/utils/encryptUserId.ts/encryptUserId';
 import { BuildingIdType } from 'features/UserList/mock';
 import { IRoomUserOption } from 'pages/PlacementPage/types';
+import styled from 'styled-components';
 
 type TagRender = SelectProps['tagRender'];
 
