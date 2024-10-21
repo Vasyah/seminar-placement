@@ -5,9 +5,9 @@ import { IUser } from 'features/UserList/types';
 import { useListUsers, useUpdateUserAccomodation } from 'shared/api/googleSheets';
 import Building from 'features/Map/components/Building/Building';
 import { BUILDINGS_INFO } from 'features/UserList/mock';
-// import ButtonWithTooltip from 'shared/components/MyButton/MyButton';
-// import { downloadGeneralInfoReport } from 'services/pdf/GenerateList';
-// import { FilePdfOutlined } from '@ant-design/icons';
+import ButtonWithTooltip from 'shared/components/MyButton/MyButton';
+import { downloadGeneralInfoReport } from 'services/pdf/GenerateList';
+import { FilePdfOutlined } from '@ant-design/icons';
 import { Encrypter } from 'shared/utils/encryptUserId.ts/encryptUserId';
 import { IRoomUserOption } from '../types';
 
@@ -40,14 +40,15 @@ export const PlacementPage = () => {
     
     return (
         <>
-            {/* <Row justify={'start'}>
+            <Row justify={'start'}>
                 <Col>
                     <ButtonWithTooltip
                         tooltipProps={{ title: 'Скачать список участников' }}
                         buttonProps={{
                             onClick: async () => {
                                 setPDFLoading(true);
-                                await downloadGeneralInfoReport(users).then(() => setPDFLoading(false));
+                                await downloadGeneralInfoReport(users.sort((a, b) =>
+                                    a.ФИО.localeCompare(b.ФИО))).then(() => setPDFLoading(false));
                             },
                             icon: <FilePdfOutlined />,
                         }}
@@ -55,7 +56,7 @@ export const PlacementPage = () => {
                         Скачать список участников
                     </ButtonWithTooltip>
                 </Col>
-            </Row> */}
+            </Row>
             <Spin spinning={isUpdating || isPDFLoading} tip="Загрузка..." size="large" fullscreen style={{zIndex:'9999!important'}} />
             <Row wrap={true}>
                 {Object.values(BUILDINGS_INFO).map((building) => (
