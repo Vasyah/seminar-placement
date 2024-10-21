@@ -37,22 +37,3 @@ export function addStylesToAllCells(row, styles) {
     }
     return row;
 }
-
-export function writeRotatedText(text, fontSize, height) {
-    fontSize *= 2;
-    height *= 2.2;
-    const canvas = document.createElement('canvas');
-    // I am using predefined dimensions so either make this part of the arguments or change at will
-    canvas.width = fontSize;
-    canvas.height = height;
-    const ctx = canvas.getContext('2d');
-    ctx.font = `${fontSize}pt PTMono`;
-    ctx.save();
-    ctx.translate(fontSize, height);
-    ctx.rotate(-0.5 * Math.PI);
-    ctx.fillStyle = '#000';
-    ctx.textAlign = 'center';
-    ctx.fillText(text, height / 2, 0);
-    ctx.restore();
-    return canvas.toDataURL();
-}
