@@ -1,4 +1,22 @@
-import getPdfMake from './pdfMake';
+// import statement
+import pdfMake from "pdfmake/build/pdfmake";
+
+// Defining and Using Custom Fonts
+const pdfMakeFonts = {
+    Roboto: {
+        normal:
+            "https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Regular.ttf",
+        bold: "https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Medium.ttf",
+        italics:
+            "https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Italic.ttf",
+        bolditalics:
+            "https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-MediumItalic.ttf",
+    },
+};
+
+// Assign the custom fonts to pdfMake
+pdfMake.fonts = pdfMakeFonts;
+
 import { cmToPt } from './pdf';
 import { formatName, generateEmptyRows } from './reports/Helpers';
 import { format, parseISO } from 'date-fns';
@@ -62,8 +80,6 @@ export async function downloadGeneralInfoReport(report) {
         },
     };
 
-    const fileName = 'title' + '.pdf';
-    const pdfMake = await getPdfMake();
     pdfMake.createPdf(docDefinition, tableLayouts).open();
 }
 

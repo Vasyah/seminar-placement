@@ -19,7 +19,7 @@
         "eslint-plugin-import": "^2.29.1",
         "eslint-plugin-react": "^7.34.1",
         "nanoid": "^5.0.5",
-        "pdfmake": "^0.2.10",
+        "pdfmake": "^0.2.14",
         "prettier": "^3.2.5",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
@@ -52,6 +52,7 @@
     "devDependencies": {
         "@types/jest": "^27.5.2",
         "@types/node": "^20.12.7",
+        "@types/pdfmake": "^0.2.9",
         "@types/react": "^18.2.51",
         "@types/react-dom": "^18.2.18",
         "@vitejs/plugin-react": "^4.2.1",
@@ -63,5 +64,5 @@
     },
     "optionalDependencies": {
         "@rollup/rollup-linux-x64-gnu": "4.6.1"
-  }
+    }
 }
