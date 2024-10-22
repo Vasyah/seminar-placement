@@ -4,4 +4,5 @@ export interface IRoomUserOption {
     label: string;
     Город: string;
     id: string;
+    placement: string;
 }

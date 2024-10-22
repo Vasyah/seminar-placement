@@ -140,7 +140,10 @@ const Rooms: React.FunctionComponent<IUserTableProps> = ({ users, rooms, onUserA
                         <StyledSelect
                             ref={select}
                             showSearch
-                            options={options}
+                            options={options.map(x => {
+                                x.label = x.label + x.placement;
+                                return x;
+                            })}
                             style={{ minWidth: 300, width: '100%' }}
                             mode="tags"
                             value={getOptions(roomUsers)}

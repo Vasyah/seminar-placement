@@ -19,7 +19,9 @@ export const PlacementPage = () => {
     const { updateUserAccomodation, isUpdating } = useUpdateUserAccomodation();
 
     const getOptions = useCallback(
-        (users: IUser[]): IRoomUserOption[] => users.map(({ user_id, ФИО, Город }) => ({ value: Encrypter.encodeId(user_id, ФИО), label: ФИО, Город, id: user_id })),
+        (users: IUser[]): IRoomUserOption[] => users.map(({ user_id, ФИО, Город, Комната, Корпус }) => {
+            const placement = !!Корпус && !!Комната ? ` (Корпус: ${Корпус}, Комната: ${Комната})` : "";
+            return { value: Encrypter.encodeId(user_id, ФИО), label: ФИО, Город, id: user_id, placement: placement }}),
         [],
     );
     useEffect(() => {
