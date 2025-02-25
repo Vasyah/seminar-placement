@@ -1,21 +1,25 @@
-import { CoffeeOutlined, HomeOutlined, PieChartOutlined } from '@ant-design/icons';
-import { MainPage } from 'pages/Main/ui/MainPage';
-import { NutritionPage } from 'pages/Nutrition/NutritionPage';
-import { PlacementPage } from 'pages/PlacementPage/ui/PlacementPage';
+import {CoffeeOutlined, HomeOutlined, PieChartOutlined} from '@ant-design/icons';
+import {MainPage} from 'pages/Main/ui/MainPage';
+import {NutritionPage} from 'pages/Nutrition/NutritionPage';
+import {PlacementPage} from 'pages/PlacementPage/ui/PlacementPage';
 import React from 'react';
+import {Payment} from "pages/PaymentVerify";
 
-export const BASE_URL = '/seminar-placement/';
+export const BASE_URL = '';
 
 export enum AppRoutes {
     DASHBOARD = 'dashboard',
     PLACEMENT = 'placement',
     NUTRITION = 'nutrition',
+    PAYMENT = 'payment',
+
 }
 
 export const RoutePath: Record<AppRoutes, string> = {
     [AppRoutes.DASHBOARD]: BASE_URL,
     [AppRoutes.PLACEMENT]: BASE_URL + AppRoutes.PLACEMENT,
     [AppRoutes.NUTRITION]: BASE_URL + AppRoutes.NUTRITION,
+    [AppRoutes.PAYMENT]: BASE_URL + AppRoutes.PAYMENT,
 };
 
 export type RouteConfig = { path: string; element: React.ReactNode; label: string; icon: JSX.Element };
@@ -23,21 +27,33 @@ export type RouteConfig = { path: string; element: React.ReactNode; label: strin
 export const routeConfig: Record<AppRoutes, RouteConfig> = {
     [AppRoutes.DASHBOARD]: {
         path: RoutePath.dashboard,
-        element: <MainPage />,
+        element: <MainPage/>,
         label: 'Главная',
-        icon: <PieChartOutlined />,
+        icon: <PieChartOutlined/>,
     },
     [AppRoutes.PLACEMENT]: {
         path: RoutePath.placement,
-        element: <PlacementPage />,
+        element: <PlacementPage/>,
         label: 'Расселение',
-        icon: <HomeOutlined />,
+        icon: <HomeOutlined/>,
     },
     [AppRoutes.NUTRITION]: {
         path: RoutePath.nutrition,
-        element: <NutritionPage />,
+        element: <NutritionPage/>,
         label: 'Питание',
-        icon: <CoffeeOutlined />,
+        icon: <CoffeeOutlined/>,
+    },
+    [AppRoutes.NUTRITION]: {
+        path: RoutePath.nutrition,
+        element: <NutritionPage/>,
+        label: 'Питание',
+        icon: <CoffeeOutlined/>,
+    },
+    [AppRoutes.PAYMENT]: {
+        path: RoutePath.payment,
+        element: <Payment/>,
+        label: 'Оплата',
+        icon: <CoffeeOutlined/>,
     },
 };
 

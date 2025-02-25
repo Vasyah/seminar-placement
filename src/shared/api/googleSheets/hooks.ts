@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { BuildingIdType } from 'features/UserList/mock';
 import { SEMINAR } from 'shared/utils/consts/consts';
+import {IUser} from "../../../features/UserList/types";
 
 export const createListUsersKey = () => ['users'];
 
@@ -36,7 +37,7 @@ const listUsers = () => {
                     'content-type': 'text/plain',
                 },
             })
-            .then((r) => r.data);
+            .then((r) => r.data as IUser[]);
     } catch (error) {
         console.error(error);
     }
