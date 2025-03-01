@@ -38,7 +38,7 @@ export const AppLayout: React.FC<PropsWithChildren> = ({children}) => {
                     <div className="demo-logo-vertical"/>
                     <Menu theme="dark" mode="horizontal"
                           defaultSelectedKeys={[window.location.pathname.split('/').join('')]} items={items}
-                          style={{flex: 1, minWidth: 0}} onClick={navigateHandler}/>
+                          style={{flex: 1, minWidth: 0}} onClick={navigateHandler}/> i
                 </Header>
                 <Layout>
                     <Content>

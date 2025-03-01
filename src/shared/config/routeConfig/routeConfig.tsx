@@ -1,4 +1,4 @@
-import {CoffeeOutlined, HomeOutlined} from '@ant-design/icons';
+import {CoffeeOutlined, HomeOutlined, LikeOutlined} from '@ant-design/icons';
 import React from 'react';
 import {Payment} from "pages/PaymentVerify";
 import {PlacementPage} from "../../../pages/PlacementPage/ui/PlacementPage";
@@ -53,7 +53,7 @@ export const routeConfig: {
         path: RoutePath.payment,
         element: <Payment/>,
         label: 'Оплата',
-        icon: <CoffeeOutlined/>,
+        icon: <LikeOutlined />,
     },
 };
 
