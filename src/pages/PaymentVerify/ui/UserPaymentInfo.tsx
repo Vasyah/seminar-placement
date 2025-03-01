@@ -13,7 +13,7 @@ export const UserPaymentInfo = ({user}: UserPaymentInfoProps) => {
         return <Flex gap={"small"} align={'center'}>
             <div>
                 <Tag
-                    color={isPayed ? 'success' : 'warning'}>{isPayed ? 'Оплачено' : 'Не плачено'}
+                    color={isPayed ? 'success' : 'warning'}>{isPayed ? 'Оплачено' : 'Не оплачено'}
                 </Tag>
             </div>
             <div>{user?.ФИО}</div>

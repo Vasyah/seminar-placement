@@ -1,13 +1,13 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import axios from 'axios';
-import { BuildingIdType } from 'features/UserList/mock';
-import { SEMINAR } from 'shared/utils/consts/consts';
+import {BuildingIdType} from 'features/UserList/mock';
+import {SEMINAR} from 'shared/utils/consts/consts';
 import {IUser} from "../../../features/UserList/types";
 
 export const createListUsersKey = () => ['users'];
 
 export const useListUsers = () => {
-    return useQuery({ queryKey: createListUsersKey(), queryFn: listUsers });
+    return useQuery({queryKey: createListUsersKey(), queryFn: listUsers});
 };
 
 export function useUpdateUserAccomodation() {
@@ -18,7 +18,7 @@ export function useUpdateUserAccomodation() {
             return await updateUserAccomodation(accomodation);
         },
         onSuccess: async () => {
-            await queryClient.invalidateQueries({ queryKey: createListUsersKey() });
+            await queryClient.invalidateQueries({queryKey: createListUsersKey()});
         },
     });
 
@@ -54,6 +54,47 @@ const updateUserAccomodation = (accomodation: UserAccomodation) => {
     try {
         return axios
             .post(SEMINAR.URL, accomodation, {
+                headers: {
+                    'content-type': 'text/plain',
+                },
+            })
+            .then((r) => r.data);
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+export interface UserPayment {
+    user_id: string;
+    ФИО: string;
+    Корпус?: BuildingIdType;
+    Комната?: BuildingIdType;
+}
+
+
+export function useUpdateUsersPayment() {
+    const queryClient = useQueryClient();
+
+    const mutation = useMutation({
+        mutationFn: async (users: IUser[]) => {
+            return await updateUsersPayment(users);
+        },
+        onSuccess: async () => {
+            // await queryClient.invalidateQueries({queryKey: createListUsersKey()});
+        },
+    });
+
+    return {
+        ...mutation,
+        updateUserAccomodation: mutation.mutateAsync,
+        isUpdating: mutation.isPending,
+    };
+}
+
+const updateUsersPayment = (users: IUser[]) => {
+    try {
+        return axios
+            .post(SEMINAR.URL, {users, action: 'updatePayment'}, {
                 headers: {
                     'content-type': 'text/plain',
                 },

@@ -11,7 +11,7 @@ import {
     Spin,
     Tag
 } from "antd";
-import {useListUsers} from "../../../shared/api/googleSheets";
+import {useListUsers, useUpdateUsersPayment} from "../../../shared/api/googleSheets";
 import {IUser} from "../../../features/UserList/types";
 import {CloseCircleFilled, SmileOutlined} from "@ant-design/icons";
 import {SEMINAR} from "../../../shared/utils/consts/consts";
@@ -23,7 +23,7 @@ export const Payment = () => {
     const [options, setOptions] = useState<AutoCompleteProps['options']>([{}]);
     const [selectedUsers, setSelectedUsers] = useState<IUser[]>([]);
     const [coordinator, setCoordinator] = useState<string | null>(null);
-
+    const {isUpdating, mutate} = useUpdateUsersPayment()
 
     const getAutocompleteOption = (user: IUser) => {
         return {
@@ -94,6 +94,21 @@ export const Payment = () => {
         setSelectedUsers(users);
     }
 
+    const updatePayments = (users: IUser[]) => {
+        const usersToUpdate: IUser[] = users.map((user) => {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-expect-error
+            const {label, value, ...rest} = user
+            return {
+                ...rest,
+                Координатор: coordinator,
+                'Сумма оплаты': "10500",
+                'Дата оплаты': new Date(),
+            }
+        })
+        mutate(usersToUpdate)
+        console.log(usersToUpdate)
+    }
     return <ConfigProvider
         renderEmpty={customizeRenderEmpty}>
         <Flex vertical gap={'middle'}>
@@ -131,8 +146,10 @@ export const Payment = () => {
                     options={SEMINAR.COORDINATORS}
                 />
 
-                <Button type={'primary'}>Подтвердить оплату </Button>
+                <Button type={'primary'} onClick={() => updatePayments(selectedUsers)}
+                        disabled={!selectedUsers?.length || !coordinator}>Подтвердить оплату </Button>
             </Flex>
         </Flex>
     </ConfigProvider>
 };
+
