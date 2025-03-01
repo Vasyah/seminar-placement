@@ -24,7 +24,6 @@ export type RouteConfig = { path: string; element: React.ReactNode; label: strin
 
 export const routeConfig: {
     [AppRoutes.PAYMENT]: { path: string; icon: React.JSX.Element; label: string; element: React.JSX.Element },
-    [AppRoutes.PLACEMENT]: { path: string; icon: React.JSX.Element; label: string; element: React.JSX.Element }
 } = {
     // [AppRoutes.DASHBOARD]: {
     //     path: RoutePath.dashboard,
@@ -32,12 +31,12 @@ export const routeConfig: {
     //     label: 'Главная',
     //     icon: <PieChartOutlined/>,
     // },
-    [AppRoutes.PLACEMENT]: {
-        path: RoutePath.placement,
-        element: <PlacementPage/>,
-        label: 'Расселение',
-        icon: <HomeOutlined/>,
-    },
+    // [AppRoutes.PLACEMENT]: {
+    //     path: RoutePath.placement,
+    //     element: <PlacementPage/>,
+    //     label: 'Расселение',
+    //     icon: <HomeOutlined/>,
+    // },
     // [AppRoutes.NUTRITION]: {
     //     path: RoutePath.nutrition,
     //     element: <NutritionPage/>,
