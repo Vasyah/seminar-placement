@@ -17,6 +17,6 @@ export default defineConfig({
         eslint(),
     ],
     build: {
-        outDir: 'build',
+        outDir: 'dist',
     },
 });
