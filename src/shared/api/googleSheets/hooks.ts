@@ -80,7 +80,7 @@ export function useUpdateUsersPayment() {
             return await updateUsersPayment(users);
         },
         onSuccess: async () => {
-            // await queryClient.invalidateQueries({queryKey: createListUsersKey()});
+            await queryClient.invalidateQueries({queryKey: createListUsersKey()});
         },
     });
 
@@ -94,7 +94,7 @@ export function useUpdateUsersPayment() {
 const updateUsersPayment = (users: IUser[]) => {
     try {
         return axios
-            .post(SEMINAR.URL, {users, action: 'updatePayment'}, {
+            .post(SEMINAR.URL, JSON.stringify({users, action: 'updatePayment'}), {
                 headers: {
                     'content-type': 'text/plain',
                 },

@@ -1,15 +1,10 @@
-import React, {FC, PropsWithChildren} from 'react';
+import React, {PropsWithChildren} from 'react';
 import {Layout, Menu, MenuProps, theme} from 'antd';
 
-import {DesktopOutlined, PieChartOutlined, TeamOutlined, UserOutlined, UsergroupAddOutlined} from '@ant-design/icons';
-import {routeConfig, routeConfigArray, RoutePath} from 'shared/config/routeConfig/routeConfig';
+import {routeConfigArray} from 'shared/config/routeConfig/routeConfig';
 import {useNavigate} from 'react-router-dom';
 
-const {Header, Content, Footer, Sider} = Layout;
-
-export interface AppLayoutProps {
-    content: React.ReactNode;
-}
+const {Header, Content, Footer} = Layout;
 
 type MenuItem = Required<MenuProps>['items'][number];
 
