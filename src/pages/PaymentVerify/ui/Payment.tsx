@@ -37,15 +37,11 @@ export const Payment = () => {
 
 
         useEffect(() => {
-            console.log('updateTheUsers', isLoading)
             if (isLoading) return;
 
             if (data) {
-
                 const userOptions = data?.map(getAutocompleteOption)
                 setOptions(userOptions);
-
-                console.log(userOptions);
             }
 
         }, [data, isLoading]);
@@ -77,7 +73,6 @@ export const Payment = () => {
 
             const filteredData = data?.filter((item) => String(item?.ФИО)?.toLowerCase().includes(query?.toLowerCase()))
             const userOptions = filteredData?.map(getAutocompleteOption)
-            console.log(userOptions, query)
             setOptions(userOptions);
         }
 
@@ -86,7 +81,6 @@ export const Payment = () => {
             const idxUser = findUser(selectedUsers, user);
 
 
-            console.log({idxUser})
             if (idxUser === -1) {
                 console.error('Участник не найден')
             }
@@ -94,7 +88,6 @@ export const Payment = () => {
             const users = [...selectedUsers]
 
             users.splice(idxUser, 1);
-            console.log({users})
             setSelectedUsers(users);
         }
 
@@ -112,15 +105,15 @@ export const Payment = () => {
             })
             try {
                 await mutate(usersToUpdate)
-
+                message.success(`Оплата подтверждена`)
                 const users_id = usersToUpdate.map(user => user?.user_id)
-
+                message.success(`Сообщения в телеграм отправлены`)
                 await sendPayments(users_id)
-            } catch (e) {
-                console.error('ошибка во время обновления данных')
-            }
 
-            console.log(usersToUpdate)
+                setSelectedUsers([])
+            } catch (e) {
+                message.error(`Ошибка во время подтверждения оплаты, напишите в тех. поддержку @vasyahG (телеграм)`)
+            }
         }
         return <ConfigProvider
             renderEmpty={customizeRenderEmpty}>
@@ -152,18 +145,16 @@ export const Payment = () => {
                         </List.Item>
                     }}
                 />
-                <Flex gap="middle" align="center">
-                    <Select
-                        placeholder={'Выберите координатора'}
-                        style={{width: 250}}
-                        onChange={(coordinator) => setCoordinator(coordinator)}
-                        options={SEMINAR.COORDINATORS}
-                    />
+                <Select
+                    placeholder={'Выберите координатора'}
+                    style={{width: '100%'}}
+                    onChange={(coordinator) => setCoordinator(coordinator)}
+                    options={SEMINAR.COORDINATORS}
+                />
 
-                    <Button type={'primary'} onClick={() => updatePayments(selectedUsers)}
-                            disabled={!selectedUsers?.length || !coordinator} loading={isLoading || isUpdating}>Подтвердить
-                        оплату </Button>
-                </Flex>
+                <Button type={'primary'} onClick={() => updatePayments(selectedUsers)}
+                        disabled={!selectedUsers?.length || !coordinator} loading={isLoading || isUpdating}>Подтвердить
+                    оплату </Button>
             </Flex>
         </ConfigProvider>
     }
