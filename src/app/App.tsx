@@ -8,9 +8,9 @@ export const App = () => {
 
         if (window?.Telegram?.WebApp) {
             const tg = window?.Telegram?.WebApp;
-
+            tg.ready();
             // tg.isExpanded = true;
-            tg.isVerticalSwipesEnabled = true;
+            tg.disableVerticalSwipes();
         }
     }, []);
 
