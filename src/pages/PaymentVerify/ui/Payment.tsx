@@ -144,8 +144,8 @@ export const Payment = () => {
                 <List
                     loading={isLoading || isUpdating || isSending}
                     style={{
-                        minHeight: 'calc(100vh - 250px)',
-                        maxHeight: 'calc(100vh - 250px)',
+                        minHeight: 'calc(100vh - 300px)',
+                        maxHeight: 'calc(100vh - 300px)',
                         overflowY: 'auto',
                     }}
                     bordered
