@@ -56,7 +56,6 @@ const updateUserAccomodation = (accomodation: UserAccomodation) => {
             .post(SEMINAR.URL, accomodation, {
                 headers: {
                     'content-type': 'text/plain',
-                    'Access-Control-Allow-Origin': '*',
                 },
             })
             .then((r) => r.data);
