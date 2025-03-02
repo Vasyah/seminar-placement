@@ -40,6 +40,7 @@ export const Payment = () => {
     const [selectedUsers, setSelectedUsers] = useState<IUser[]>([]);
     const [coordinator, setCoordinator] = useState<string | null>(null);
     const { isUpdating, mutateAsync: updatePaymentsApi } = useUpdateUsersPayment();
+    const [open, setOpen] = useState(false);
 
     useEffect(() => {
         if (isLoading) return;
@@ -49,6 +50,19 @@ export const Payment = () => {
             setOptions(userOptions);
         }
     }, [data, isLoading]);
+
+    useEffect(() => {
+        if (open) {
+            const preventScroll = (e) => e.preventDefault();
+            document.body.style.overflow = 'hidden';
+            document.addEventListener('touchmove', preventScroll, { passive: false });
+
+            return () => {
+                document.body.style.overflow = '';
+                document.removeEventListener('touchmove', preventScroll);
+            };
+        }
+    }, [open]);
 
     if (isLoading) {
         return <Spin tip="Загрузка..." size="large" fullscreen />;
@@ -123,24 +137,24 @@ export const Payment = () => {
         }
     };
 
-    const handleScrollApp = (isOpen: boolean) => {
-        if (isOpen) {
-            window.document.body.style.overflow = 'hidden';
-        } else {
-            window.document.body.style.overflow = 'auto';
-        }
-    };
-
     return (
         <ConfigProvider renderEmpty={customizeRenderEmpty}>
             <Flex vertical gap={'middle'} className={cx.container}>
                 <Select
-                    size="small"
+                    open={open}
                     ref={usersRef}
                     label={'Выберите участников'}
                     options={options}
-                    style={{ minWidth: '100%', maxWidth: '600px', minHeight: '32px' }}
+                    style={{ minWidth: '100%', maxWidth: '600px', minHeight: '40px', fontSize: '16px' }}
                     onSelect={onSelect}
+                    dropdownRender={(menu) => (
+                        <div onScroll={(e) => e.stopPropagation()} style={{ maxHeight: '300px', overflowY: 'auto' }}>
+                            {menu}
+                        </div>
+                    )}
+                    dropdownStyle={{
+                        touchAction: 'none',
+                    }}
                     onSearch={onSearch}
                     onChange={() => null}
                     placeholder="Введите имя участника"
@@ -150,7 +164,7 @@ export const Payment = () => {
                     optionFilterProp="ФИО"
                     filterSort={(optionA, optionB) => (optionA?.ФИО ?? '').toLowerCase().localeCompare((optionB?.ФИО ?? '').toLowerCase())}
                     loading={isLoading || isUpdating || isSending}
-                    onDropdownVisibleChange={handleScrollApp}
+                    onDropdownVisibleChange={(isOpen) => setOpen(isOpen)}
                 />
                 <List
                     loading={isLoading || isUpdating || isSending}
