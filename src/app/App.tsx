@@ -9,7 +9,7 @@ export const App = () => {
         if (window?.Telegram?.WebApp) {
             const tg = window?.Telegram?.WebApp;
 
-            tg.isFullscreen = true;
+            // tg.isExpanded = true;
             tg.isVerticalSwipesEnabled = true;
         }
     }, []);
