@@ -22,7 +22,7 @@ export const sendPaymentSuccess = (user_id: string) => {
                     command_name: 'Поздравление с успешной оплатой',
                     tg_chat_id: user_id,
                 },
-            })
+            }).then(result => result)
     } catch (error) {
         console.error(error);
     }
@@ -45,7 +45,7 @@ export const updatePaymentVariables = ({variable, user_id, value}: {
 
                         }
                     }
-                )
+                ).then(result => result)
         } catch
             (error) {
             console.error(error);
