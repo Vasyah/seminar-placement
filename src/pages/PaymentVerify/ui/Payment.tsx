@@ -143,6 +143,7 @@ export const Payment = () => {
         <ConfigProvider renderEmpty={customizeRenderEmpty}>
             <Flex vertical gap={'middle'} className={cx.container}>
                 <Select
+                    size={'large'}
                     className={cx.select}
                     open={open}
                     ref={usersRef}
@@ -195,10 +196,25 @@ export const Payment = () => {
                         );
                     }}
                 />
-                <Select placeholder={'Выберите координатора'} style={{ width: '100%', fontSize: '16px' }} onChange={(coordinator) => setCoordinator(coordinator)} options={SEMINAR.COORDINATORS} />
+                <Select
+                    size={'large'}
+                    placeholder={'Выберите координатора'}
+                    style={{ width: '100%', fontSize: '16px!important' }}
+                    onChange={(coordinator) => setCoordinator(coordinator)}
+                    dropdownStyle={{
+                        fontSize: '16px',
+                    }}
+                    // options={SEMINAR.COORDINATORS}
+                >
+                    {SEMINAR.COORDINATORS.map((coordinator) => (
+                        <Select.Option className={cx.option} key={coordinator.value} value={coordinator.value}>
+                            {coordinator.label}
+                        </Select.Option>
+                    ))}
+                </Select>
 
                 <Button type={'primary'} onClick={() => updatePayments(selectedUsers)} disabled={!selectedUsers?.length || !coordinator} loading={isLoading || isUpdating || isSending}>
-                    Подтвердить оплату{' '}
+                    Подтвердить оплату
                 </Button>
             </Flex>
         </ConfigProvider>

@@ -7,3 +7,7 @@
 .select {
     touch-action: manipulation; /* Ограничивает взаимодействие */
 }
+
+.option {
+    font-size: inherit !important;
+}
