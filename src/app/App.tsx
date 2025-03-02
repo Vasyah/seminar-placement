@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect } from 'react';
+import React, { useLayoutEffect } from 'react';
 import { AppLayout } from './provider/Layout/ui/AppLayout';
 import { AppRouter } from './provider/Router/ui/AppRouter';
 import { App as AntApp } from 'antd';
@@ -10,7 +10,12 @@ export const App = () => {
             const tg = window?.Telegram?.WebApp;
             tg.ready();
             // tg.isExpanded = true;
-            tg.disableVerticalSwipes();
+            try {
+                tg?.disableVerticalSwipes();
+                tg?.requestFullscreen();
+            } catch (e) {
+                console.error(e);
+            }
         }
     }, []);
 
