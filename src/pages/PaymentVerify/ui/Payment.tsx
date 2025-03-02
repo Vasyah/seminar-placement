@@ -115,7 +115,7 @@ export const Payment = () => {
             return {
                 ...rest,
                 Координатор: coordinator,
-                'Сумма оплаты': '10500',
+                'Сумма оплаты': `${SEMINAR.PRICE}`,
                 'Дата оплаты': new Date().toLocaleDateString()
             };
         });
