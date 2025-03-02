@@ -141,6 +141,7 @@ export const Payment = () => {
         <ConfigProvider renderEmpty={customizeRenderEmpty}>
             <Flex vertical gap={'middle'} className={cx.container}>
                 <Select
+                    className={cx.select}
                     open={open}
                     ref={usersRef}
                     label={'Выберите участников'}
@@ -192,7 +193,7 @@ export const Payment = () => {
                         );
                     }}
                 />
-                <Select placeholder={'Выберите координатора'} style={{ width: '100%' }} onChange={(coordinator) => setCoordinator(coordinator)} options={SEMINAR.COORDINATORS} />
+                <Select placeholder={'Выберите координатора'} style={{ width: '100%', fontSize: '16px' }} onChange={(coordinator) => setCoordinator(coordinator)} options={SEMINAR.COORDINATORS} />
 
                 <Button type={'primary'} onClick={() => updatePayments(selectedUsers)} disabled={!selectedUsers?.length || !coordinator} loading={isLoading || isUpdating || isSending}>
                     Подтвердить оплату{' '}
