@@ -6,12 +6,11 @@ import { CloseCircleFilled, SmileOutlined } from '@ant-design/icons';
 import { SEMINAR } from '../../../shared/utils/consts/consts';
 import { UserPaymentInfo } from './UserPaymentInfo';
 import { findUser } from '../lib/findUser';
-import { showMessage } from 'shared/components/message';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import { PuzzleBotApi } from 'app/config/puzzlebotApi';
+import cx from './style.module.scss';
 
-ConfigProvider.config({});
 export const Payment = () => {
     const { message } = App.useApp();
     const usersRef = useRef(null);
@@ -125,7 +124,7 @@ export const Payment = () => {
     };
     return (
         <ConfigProvider renderEmpty={customizeRenderEmpty}>
-            <Flex vertical gap={'middle'}>
+            <Flex vertical gap={'middle'} className={cx.container}>
                 <Select
                     size="small"
                     ref={usersRef}
