@@ -21,7 +21,7 @@ export const App = () => {
 
     return (
         <div className="App">
-            <AntApp message={{ top: 50, duration: 1.5 }}>
+            <AntApp message={{ top: 125, duration: 1.5 }}>
                 <AppLayout>
                     <AppRouter />
                 </AppLayout>

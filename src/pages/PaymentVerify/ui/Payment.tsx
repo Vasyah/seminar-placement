@@ -39,7 +39,9 @@ export const Payment = () => {
     const [options, setOptions] = useState<AutoCompleteProps['options']>([{}]);
     const [selectedUsers, setSelectedUsers] = useState<IUser[]>([]);
     const [coordinator, setCoordinator] = useState<string | null>(null);
-    const { isUpdating, mutateAsync: updatePaymentsApi } = useUpdateUsersPayment();
+    const { isUpdating, mutateAsync: updatePaymentsApi } = useUpdateUsersPayment(() => {
+        message.success('Оплата подтверждена');
+    });
     const [open, setOpen] = useState(false);
 
     useEffect(() => {

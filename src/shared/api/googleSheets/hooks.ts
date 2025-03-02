@@ -3,7 +3,6 @@ import axios from 'axios';
 import { BuildingIdType } from 'features/UserList/mock';
 import { SEMINAR } from 'shared/utils/consts/consts';
 import { IUser } from '../../../features/UserList/types';
-import { showMessage } from 'shared/components/message';
 
 export const createListUsersKey = () => ['users'];
 
@@ -72,7 +71,7 @@ export interface UserPayment {
     Комната?: BuildingIdType;
 }
 
-export function useUpdateUsersPayment() {
+export function useUpdateUsersPayment(onSuccess?: () => void) {
     const queryClient = useQueryClient();
 
     const mutation = useMutation({
@@ -80,7 +79,9 @@ export function useUpdateUsersPayment() {
             return await updateUsersPayment(users);
         },
         onSuccess: async () => {
-            showMessage('success', 'Оплата подтверждена');
+            if (onSuccess) {
+                onSuccess();
+            }
             await queryClient.invalidateQueries({ queryKey: createListUsersKey() });
         },
     });
