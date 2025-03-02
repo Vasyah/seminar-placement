@@ -1,7 +1,7 @@
-import axios from "axios";
-import {useMutation, useQueryClient} from "@tanstack/react-query";
-import {PuzzleBotApi} from "../../../app/config/puzzlebotApi";
-
+import axios from 'axios';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { PuzzleBotApi } from '../../../app/config/puzzlebotApi';
+import { showMessage } from 'shared/components/message';
 
 export function useSendPayments() {
     const queryClient = useQueryClient();
@@ -10,11 +10,13 @@ export function useSendPayments() {
         mutationFn: async (users_id: string[]) => {
             return await sendPaymentsSuccess(users_id);
         },
+        onSuccess: () => {
+            showMessage('success', 'Сообщения в телеграм отправлены');
+        },
     });
 
     return {
         ...mutation,
-        updateUserAccomodation: mutation.mutateAsync,
         isUpdating: mutation.isPending,
     };
 }
@@ -23,8 +25,12 @@ export function useSendPayments() {
     :*/
 // "Поздравление с успешной оплатой"
 export const sendPaymentsSuccess = async (users_id: string[]) => {
-    users_id.forEach(async (id) => await sendPaymentSuccess(id))
-}
+    try {
+        return users_id?.map(async (id) => sendPaymentSuccess(id));
+    } catch (e) {
+        showMessage('error', ' Ошибка при отправке увеомления в телеграм');
+    }
+};
 export const sendPaymentSuccess = (user_id: string) => {
     try {
         return axios
@@ -32,8 +38,8 @@ export const sendPaymentSuccess = (user_id: string) => {
                 params: {
                     token: PuzzleBotApi.token,
                     method: 'sendCommand',
-                    command_name: "Поздравление с успешной оплатой",
-                    tg_chat_id: user_id
+                    command_name: 'Поздравление с успешной оплатой',
+                    tg_chat_id: user_id,
                 },
                 // headers: {
                 //     // "Content-Type": "text/plain",
@@ -45,4 +51,3 @@ export const sendPaymentSuccess = (user_id: string) => {
         console.error(error);
     }
 };
-

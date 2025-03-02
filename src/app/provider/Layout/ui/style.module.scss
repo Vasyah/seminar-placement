@@ -1,0 +1,20 @@
+.footer {
+    text-align: center;
+    height: 32px;
+    padding: 0.5rem;
+
+    @media (max-width: 768px) {
+        height: 32px;
+        // padding: 0 0.25rem;
+    }
+}
+
+.content {
+    padding: 24px;
+    // min-height: calc(100vh - 96px);
+
+    @media (max-width: 768px) {
+        padding: 8px;
+        // min-height: calc(100vh - 32px);
+    }
+}

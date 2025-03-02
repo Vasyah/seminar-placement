@@ -1,13 +1,14 @@
-import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import {BuildingIdType} from 'features/UserList/mock';
-import {SEMINAR} from 'shared/utils/consts/consts';
-import {IUser} from "../../../features/UserList/types";
+import { BuildingIdType } from 'features/UserList/mock';
+import { SEMINAR } from 'shared/utils/consts/consts';
+import { IUser } from '../../../features/UserList/types';
+import { showMessage } from 'shared/components/message';
 
 export const createListUsersKey = () => ['users'];
 
 export const useListUsers = () => {
-    return useQuery({queryKey: createListUsersKey(), queryFn: listUsers});
+    return useQuery({ queryKey: createListUsersKey(), queryFn: listUsers });
 };
 
 export function useUpdateUserAccomodation() {
@@ -18,7 +19,7 @@ export function useUpdateUserAccomodation() {
             return await updateUserAccomodation(accomodation);
         },
         onSuccess: async () => {
-            await queryClient.invalidateQueries({queryKey: createListUsersKey()});
+            await queryClient.invalidateQueries({ queryKey: createListUsersKey() });
         },
     });
 
@@ -71,7 +72,6 @@ export interface UserPayment {
     Комната?: BuildingIdType;
 }
 
-
 export function useUpdateUsersPayment() {
     const queryClient = useQueryClient();
 
@@ -80,7 +80,8 @@ export function useUpdateUsersPayment() {
             return await updateUsersPayment(users);
         },
         onSuccess: async () => {
-            await queryClient.invalidateQueries({queryKey: createListUsersKey()});
+            showMessage('success', 'Оплата подтверждена');
+            await queryClient.invalidateQueries({ queryKey: createListUsersKey() });
         },
     });
 
@@ -94,7 +95,7 @@ export function useUpdateUsersPayment() {
 const updateUsersPayment = (users: IUser[]) => {
     try {
         return axios
-            .post(SEMINAR.URL, JSON.stringify({users, action: 'updatePayment'}), {
+            .post(SEMINAR.URL, JSON.stringify({ users, action: 'updatePayment' }), {
                 headers: {
                     'content-type': 'text/plain',
                 },
