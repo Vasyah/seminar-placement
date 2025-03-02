@@ -14,11 +14,11 @@ export const UserPaymentInfo = ({ user }: UserPaymentInfoProps) => {
     return (
         <div style={{ display: 'flex', alignItems: 'center', padding: '0' }}>
             <div>
-                <Tag color={isPayed ? 'success' : 'warning'} style={{ fontSize: '12px' }}>
+                <Tag color={isPayed ? 'success' : 'warning'} style={{ fontSize: '14px' }}>
                     {isPayed ? <CheckCircleOutlined /> : <CloseOutlined />}
                 </Tag>
             </div>
-            <Typography.Text style={{ fontSize: '14px' }}>{user?.ФИО}</Typography.Text>
+            <Typography.Text style={{ fontSize: '16px' }}>{user?.ФИО}</Typography.Text>
         </div>
     );
 };

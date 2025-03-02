@@ -122,6 +122,15 @@ export const Payment = () => {
             message.error('Ошибка во время подтверждения оплаты, напишите в тех. поддержку @vasyahG (телеграм)');
         }
     };
+
+    const handleScrollApp = (isOpen: boolean) => {
+        if (isOpen) {
+            window.document.body.style.overflow = 'hidden';
+        } else {
+            window.document.body.style.overflow = 'auto';
+        }
+    };
+
     return (
         <ConfigProvider renderEmpty={customizeRenderEmpty}>
             <Flex vertical gap={'middle'} className={cx.container}>
@@ -140,6 +149,8 @@ export const Payment = () => {
                     showSearch
                     optionFilterProp="ФИО"
                     filterSort={(optionA, optionB) => (optionA?.ФИО ?? '').toLowerCase().localeCompare((optionB?.ФИО ?? '').toLowerCase())}
+                    loading={isLoading || isUpdating || isSending}
+                    onDropdownVisibleChange={handleScrollApp}
                 />
                 <List
                     loading={isLoading || isUpdating || isSending}
