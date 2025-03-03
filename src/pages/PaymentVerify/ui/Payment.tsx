@@ -156,9 +156,7 @@ export const Payment = () => {
 
                             setSelectedUsers([]);
                         },
-                        onError: (e) => {
-                            message.error(`Ошибка при отправке уведомлений ${e.message}`);
-                        },
+
                     })
                 }
             );
