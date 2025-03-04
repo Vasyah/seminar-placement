@@ -207,8 +207,8 @@ export const Payment = () => {
                 <List
                     loading={loading}
                     style={{
-                        minHeight: 'calc(100vh - 300px)',
-                        maxHeight: 'calc(100vh - 300px)',
+                        minHeight: 'calc(100vh - 350px)',
+                        maxHeight: 'calc(100vh - 350px)',
                         overflowY: 'auto',
                     }}
                     bordered
