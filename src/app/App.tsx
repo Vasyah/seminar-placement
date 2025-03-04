@@ -1,13 +1,15 @@
-import React, { useLayoutEffect } from 'react';
-import { AppLayout } from './provider/Layout/ui/AppLayout';
-import { AppRouter } from './provider/Router/ui/AppRouter';
-import { App as AntApp } from 'antd';
+import React, {useLayoutEffect} from 'react';
+import {AppLayout} from './provider/Layout/ui/AppLayout';
+import {AppRouter} from './provider/Router/ui/AppRouter';
+import {App as AntApp} from 'antd';
+
 export const App = () => {
     useLayoutEffect(() => {
-        console.log(window.Telegram.WebApp);
+        console.log(window);
 
         if (window?.Telegram?.WebApp) {
             const tg = window?.Telegram?.WebApp;
+            console.log(tg?.initData);
             tg.ready();
             // tg.isExpanded = true;
             try {
@@ -21,9 +23,9 @@ export const App = () => {
 
     return (
         <div className="App">
-            <AntApp message={{ top: 125, duration: 1.5 }}>
+            <AntApp message={{top: 125, duration: 1.5}}>
                 <AppLayout>
-                    <AppRouter />
+                    <AppRouter/>
                 </AppLayout>
             </AntApp>
         </div>
