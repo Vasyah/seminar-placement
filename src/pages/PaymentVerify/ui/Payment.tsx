@@ -170,10 +170,11 @@ export const Payment = () => {
 
     };
 
+    const isTg = window?.Telegram?.WebApp?.initData
     const loading = isPending || isUpdating || isSending
     return (
         <ConfigProvider renderEmpty={customizeRenderEmpty}>
-            <Flex vertical gap={'middle'} className={cx.container}>
+            <Flex vertical gap={'middle'} className={isTg ? `${cx.container}` : ''}>
                 <Select
                     size={'large'}
                     className={cx.select}

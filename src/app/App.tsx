@@ -5,11 +5,8 @@ import {App as AntApp} from 'antd';
 
 export const App = () => {
     useLayoutEffect(() => {
-        console.log(window);
-
         if (window?.Telegram?.WebApp) {
             const tg = window?.Telegram?.WebApp;
-            console.log(tg?.initData);
             tg.ready();
             // tg.isExpanded = true;
             try {
