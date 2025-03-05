@@ -1,8 +1,8 @@
 import React, {useEffect, useMemo, useRef, useState} from 'react';
-import {App, AutoCompleteProps, Button, ConfigProvider, Flex, List, Select, Spin} from 'antd';
+import {App, AutoCompleteProps, Button, ConfigProvider, Divider, Flex, Input, List, Select, Space, Spin} from 'antd';
 import {useListUsers, useUpdateUsersPayment} from '../../../shared/api/googleSheets';
 import {IUser} from '../../../features/UserList/types';
-import {CloseCircleFilled, SmileOutlined} from '@ant-design/icons';
+import {CloseCircleFilled, PlusOutlined, SmileOutlined} from '@ant-design/icons';
 import {SEMINAR} from '../../../shared/utils/consts/consts';
 import {UserPaymentInfo} from './UserPaymentInfo';
 import {findUser} from '../lib/findUser';
@@ -15,6 +15,12 @@ import {updatePaymentVariables} from "../../../shared/api/puzzleBot/hooks";
 export const Payment = () => {
     const {message} = App.useApp();
     const usersRef = useRef(null);
+    const [name, setName] = useState('');
+    const [coordinators, setItems] = useState(SEMINAR.COORDINATORS);
+
+    const onNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setName(event.target.value);
+    };
 
     const {mutate: sendPayment, isPending: isSending} = useMutation({
         mutationFn: (user_id: number) => {
@@ -28,6 +34,15 @@ export const Payment = () => {
             });
         },
     });
+
+    const addItem = (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
+        e.preventDefault();
+        setItems([...coordinators, {label: name, value: name}]);
+        setName('');
+        // setTimeout(() => {
+        //     inputRef.current?.focus();
+        // }, 0);
+    };
 
     const getAutocompleteOption = (user: IUser) => {
         return {
@@ -172,6 +187,7 @@ export const Payment = () => {
 
     const isTg = window?.Telegram?.WebApp?.initData
     const loading = isPending || isUpdating || isSending
+
     return (
         <ConfigProvider renderEmpty={customizeRenderEmpty}>
             <Flex vertical gap={'middle'} className={isTg ? `${cx.container}` : ''}>
@@ -243,8 +259,27 @@ export const Payment = () => {
                     dropdownStyle={{
                         fontSize: '16px',
                     }}
+                    dropdownRender={(menu) => (
+                        <>
+                            {menu}
+                            <Divider style={{margin: '8px 0'}}/>
+                            <Space style={{padding: '0 8px 4px', width: '100%'}}>
+                                <Input
+                                    style={{width: '100%'}}
+                                    placeholder="Введите координатора"
+                                    // ref={inputRef}
+                                    value={name}
+                                    onChange={onNameChange}
+                                    onKeyDown={(e) => e.stopPropagation()}
+                                />
+                                <Button type="text" icon={<PlusOutlined/>} onClick={addItem}>
+                                    Добавить
+                                </Button>
+                            </Space>
+                        </>
+                    )}
                 >
-                    {SEMINAR.COORDINATORS.map((coordinator) => (
+                    {coordinators.map((coordinator) => (
                         <Select.Option className={cx.option} key={coordinator.value} value={coordinator.value}>
                             {coordinator.label}
                         </Select.Option>
