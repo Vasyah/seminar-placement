@@ -7,10 +7,8 @@ import {SEMINAR} from '../../../shared/utils/consts/consts';
 import {UserPaymentInfo} from './UserPaymentInfo';
 import {findUser} from '../lib/findUser';
 import {useMutation} from '@tanstack/react-query';
-import axios from 'axios';
-import {PuzzleBotApi} from 'app/config/puzzlebotApi';
 import cx from './style.module.scss';
-import {updatePaymentVariables} from "../../../shared/api/puzzleBot/hooks";
+import {sendPaymentSuccess, updatePaymentVariables} from "../../../shared/api/puzzleBot/hooks";
 
 export const Payment = () => {
     const {message} = App.useApp();
@@ -23,15 +21,8 @@ export const Payment = () => {
     };
 
     const {mutate: sendPayment, isPending: isSending} = useMutation({
-        mutationFn: (user_id: number) => {
-            return axios.get(PuzzleBotApi.url, {
-                params: {
-                    token: PuzzleBotApi.token,
-                    method: 'sendCommand',
-                    command_name: 'Поздравление с успешной оплатой',
-                    tg_chat_id: user_id,
-                },
-            });
+        mutationFn: (user_id: string) => {
+            return sendPaymentSuccess(user_id);
         },
     });
 
