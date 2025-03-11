@@ -97,7 +97,7 @@ export function useUpdateUsersPayment(onSuccess?: () => void) {
 const updateUsersPayment = (users: IUser[]) => {
     try {
         return axios
-            .post('/googleSheets', JSON.stringify({users, action: 'updatePayment'}), {
+            .post(SEMINAR.URL, JSON.stringify({users, action: 'updatePayment'}), {
                 headers: {
                     'content-type': 'text/plain',
                     'Access-Control-Allow-Origin': '*',
