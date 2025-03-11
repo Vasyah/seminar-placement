@@ -56,6 +56,7 @@ const updateUserAccomodation = (accomodation: UserAccomodation) => {
             .post(SEMINAR.URL, accomodation, {
                 headers: {
                     'content-type': 'text/plain',
+                    'Access-Control-Allow-Origin': '*',
                 },
             })
             .then((r) => r.data);
@@ -96,9 +97,10 @@ export function useUpdateUsersPayment(onSuccess?: () => void) {
 const updateUsersPayment = (users: IUser[]) => {
     try {
         return axios
-            .post(SEMINAR.URL, JSON.stringify({users, action: 'updatePayment'}), {
+            .post('/googleSheets', JSON.stringify({users, action: 'updatePayment'}), {
                 headers: {
                     'content-type': 'text/plain',
+                    'Access-Control-Allow-Origin': '*',
                 },
             })
             .then((r) => r.data);
