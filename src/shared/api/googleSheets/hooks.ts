@@ -56,7 +56,6 @@ const updateUserAccomodation = (accomodation: UserAccomodation) => {
             .post(SEMINAR.URL, accomodation, {
                 headers: {
                     'content-type': 'text/plain',
-                    'Access-Control-Allow-Origin': '*',
                 },
             })
             .then((r) => r.data);
@@ -100,7 +99,6 @@ const updateUsersPayment = (users: IUser[]) => {
             .post(SEMINAR.URL, JSON.stringify({users, action: 'updatePayment'}), {
                 headers: {
                     'content-type': 'text/plain',
-                    'Access-Control-Allow-Origin': '*',
                 },
             })
             .then((r) => r.data);
