@@ -1,11 +1,12 @@
-import React, { PropsWithChildren } from 'react';
-import { Layout, Menu, MenuProps, theme } from 'antd';
+import React, {PropsWithChildren} from 'react';
+import {FloatButton, Layout, Menu, MenuProps, Modal, theme} from 'antd';
 
-import { routeConfigArray } from 'shared/config/routeConfig/routeConfig';
-import { useNavigate } from 'react-router-dom';
+import {routeConfigArray} from 'shared/config/routeConfig/routeConfig';
+import {useNavigate} from 'react-router-dom';
 import cx from './style.module.scss';
+import {UsergroupAddOutlined} from "@ant-design/icons";
 
-const { Header, Content, Footer } = Layout;
+const {Header, Content, Footer} = Layout;
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -18,14 +19,14 @@ function getItem(label: React.ReactNode, key: string, icon?: React.ReactNode, ch
     } as MenuItem;
 }
 
-const items: MenuItem[] = routeConfigArray.map(({ label, path, icon }) => getItem(label, path, icon));
+const items: MenuItem[] = routeConfigArray.map(({label, path, icon}) => getItem(label, path, icon));
 // ([getItem('Главная', RoutePath.dashboard, <PieChartOutlined />), getItem('Заселение', RoutePath.placement, <DesktopOutlined />)];
 
-export const AppLayout: React.FC<PropsWithChildren> = ({ children }) => {
+export const AppLayout: React.FC<PropsWithChildren> = ({children}) => {
     const navigate = useNavigate();
 
     const {
-        token: { colorBgContainer, borderRadiusLG },
+        token: {colorBgContainer, borderRadiusLG},
     } = theme.useToken();
 
     const navigateHandler: MenuProps['onClick'] = (e) => {
@@ -34,14 +35,14 @@ export const AppLayout: React.FC<PropsWithChildren> = ({ children }) => {
 
     return (
         <div className="App">
-            <Layout style={{ minHeight: '100vh' }}>
-                {/* <Header style={{display: 'flex', alignItems: 'center'}}>
+            <Layout style={{minHeight: '100vh'}}>
+                <Header style={{display: 'flex', alignItems: 'center'}}>
                     <div className="demo-logo-vertical"/>
                     <Menu theme="dark" mode="horizontal"
                           defaultSelectedKeys={[window.location.pathname.split('/').join('')]} items={items}
                           style={{flex: 1, minWidth: 0}} onClick={navigateHandler}/> i
-                </Header> */}
-                <Layout style={{ background: '#fff' }}>
+                </Header>
+                <Layout style={{background: '#fff'}}>
                     <Content>
                         <div
                             className={cx.content}
@@ -54,13 +55,13 @@ export const AppLayout: React.FC<PropsWithChildren> = ({ children }) => {
                     </Content>
 
                     <Footer className={cx.footer}>Космическая семья ©2025</Footer>
-                    {/* <FloatButton icon={<UsergroupAddOutlined />} type="primary" style={{ right: 24 }} onClick={() => setUserShow(true)} /> */}
+                     {/*<FloatButton icon={<UsergroupAddOutlined />} type="primary" style={{ right: 24 }} onClick={() => setUserShow(true)} />*/}
 
-                    {/* {userShow && (
-                        <Modal width={1024} open={userShow} keyboard onCancel={() => setUserShow(false)} onOk={() => setUserShow(false)}>
-                            <UserList users={users} />
-                        </Modal>
-                    )} */}
+                    {/*{userShow && (*/}
+                    {/*    <Modal width={1024} open={userShow} keyboard onCancel={() => setUserShow(false)} onOk={() => setUserShow(false)}>*/}
+                    {/*        <UserList users={users} />*/}
+                    {/*    </Modal>*/}
+                    {/*)}*/}
                 </Layout>
             </Layout>
         </div>
