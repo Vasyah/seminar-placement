@@ -7,5 +7,7 @@ export const SEMINAR = {
         {value: 'Козловский Андрей', label: 'Козловский Андрей'},
         {value: 'Шагалина Эльмира', label: 'Шагалина Эльмира'},
         {value: 'Коростылёв Александр', label: 'Коростылёв Александр'},
-    ]
+    ],
+    actions: {updatePayment: 'updatePayment', updateUser: 'updateUser'},
 };
+

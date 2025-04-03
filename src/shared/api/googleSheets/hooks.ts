@@ -15,6 +15,7 @@ export function useUpdateUserAccomodation() {
 
     const mutation = useMutation({
         mutationFn: async (accomodation: UserAccomodation) => {
+            console.log(accomodation)
             return await updateUserAccomodation(accomodation);
         },
         onSuccess: async () => {
@@ -53,7 +54,7 @@ export interface UserAccomodation {
 const updateUserAccomodation = (accomodation: UserAccomodation) => {
     try {
         return axios
-            .post(SEMINAR.URL, accomodation, {
+            .post(SEMINAR.URL, JSON.stringify({user: accomodation, action: SEMINAR.actions.updateUser}), {
                 headers: {
                     'content-type': 'text/plain',
                 },
@@ -96,7 +97,7 @@ export function useUpdateUsersPayment(onSuccess?: () => void) {
 const updateUsersPayment = (users: IUser[]) => {
     try {
         return axios
-            .post(SEMINAR.URL, JSON.stringify({users, action: 'updatePayment'}), {
+            .post(SEMINAR.URL, JSON.stringify({users, action: SEMINAR.actions.updatePayment}), {
                 headers: {
                     'content-type': 'text/plain',
                 },

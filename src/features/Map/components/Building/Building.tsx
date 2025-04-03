@@ -1,12 +1,12 @@
-import { IUser } from 'features/UserList/types';
+import {IUser} from 'features/UserList/types';
 import * as React from 'react';
 import SpaceInfo from '../SpaceInfo/SpaceInfo';
-import { createBuilding } from '../../utils/factories';
-import { BuildingIdType, BUILDINGS_INFO } from 'features/UserList/mock';
+import {createBuilding} from '../../utils/factories';
+import {BuildingIdType, BUILDINGS_INFO} from 'features/UserList/mock';
 import Rooms from 'features/Map/Rooms/Rooms';
-import { UseMutateAsyncFunction } from '@tanstack/react-query';
-import { UserAccomodation } from 'shared/api/googleSheets';
-import { IRoomUserOption } from 'pages/PlacementPage/types';
+import {UseMutateAsyncFunction} from '@tanstack/react-query';
+import {UserAccomodation} from 'shared/api/googleSheets';
+import {IRoomUserOption} from 'pages/PlacementPage/types';
 import styled from 'styled-components';
 
 export interface IBuildingInfoProps {
@@ -17,10 +17,11 @@ export interface IBuildingInfoProps {
     getOptions: (users: IUser[]) => IRoomUserOption[];
 }
 
-const Building: React.FunctionComponent<IBuildingInfoProps> = ({ id, users, updateUser, getOptions}) => {
+const Building: React.FunctionComponent<IBuildingInfoProps> = ({id, users, updateUser, getOptions}) => {
     const building = React.useMemo(() => createBuilding(users, id, `${id} корпус`, BUILDINGS_INFO[id]?.places), [users]);
 
     const onUserAdd = React.useCallback(async (id: string, ФИО: string, buildingId: BuildingIdType, roomId: number) => {
+        console.log(id, ФИО, buildingId, roomId);
         await updateUser({
             user_id: id,
             ФИО: ФИО,
@@ -31,15 +32,17 @@ const Building: React.FunctionComponent<IBuildingInfoProps> = ({ id, users, upda
     }, []);
 
     const onUserDelete = async (id: string, ФИО: string) => {
-        await updateUser({ user_id: id, ФИО: ФИО }).then((r) => console.log(r));
+        await updateUser({user_id: id, ФИО: ФИО}).then((r) => console.log(r));
         console.log(`Пользователь удален ${id} ${ФИО}`);
     };
 
     return (
         <BuildContainer>
             <h3>{building.title}</h3>
-            <SpaceInfo buildingName="Информация о корпусе" usersCount={building.users.length} total={building?.places} reserved={building?.reservedPlaces} isFull={building.isFull} />
-            <Rooms rooms={building.rooms} users={users} onUserAdd={onUserAdd} onUserDelete={onUserDelete} buildingId={building?.id}  getOptions={getOptions} />
+            <SpaceInfo buildingName="Информация о корпусе" usersCount={building.users.length} total={building?.places}
+                       reserved={building?.reservedPlaces} isFull={building.isFull}/>
+            <Rooms rooms={building.rooms} users={users} onUserAdd={onUserAdd} onUserDelete={onUserDelete}
+                   buildingId={building?.id} getOptions={getOptions}/>
         </BuildContainer>
     );
 };
