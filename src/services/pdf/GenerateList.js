@@ -17,14 +17,14 @@ const pdfMakeFonts = {
 // Assign the custom fonts to pdfMake
 pdfMake.fonts = pdfMakeFonts;
 
-import { cmToPt } from './pdf';
-import { formatName, generateEmptyRows } from './reports/Helpers';
-import { format, parseISO } from 'date-fns';
+import {cmToPt} from './pdf';
+import {generateEmptyRows} from './reports/Helpers';
+import {format, parseISO} from 'date-fns';
 
 const sportsmanCountOnPage = 23;
 const maxNameLength = 22;
 
-export async function downloadGeneralInfoReport(report) {
+export async function downloadGeneralInfoReport(report, title) {
     const pages = generateGeneralInfoPages(report);
     const docDefinition = {
         pageMargins: [15, 40, 10, 0],
@@ -32,7 +32,7 @@ export async function downloadGeneralInfoReport(report) {
             return {
                 columns: [
                     {
-                        stack: [{ text: 'Расселение' }],
+                        stack: [{text: title}],
                         fontSize: 11,
                         bold: true,
                         alignment: 'center',
@@ -81,6 +81,7 @@ export async function downloadGeneralInfoReport(report) {
     };
 
     pdfMake.createPdf(docDefinition, tableLayouts).open();
+    pdfMake.createPdf(docDefinition, tableLayouts).download(`${title}.pdf`);
 }
 
 export function generateGeneralInfoPages(report) {
@@ -90,7 +91,7 @@ export function generateGeneralInfoPages(report) {
         const page = {
             content: {
                 table: {
-                    widths: [cmToPt(0.69), cmToPt(8), cmToPt(2.5), cmToPt(2.5), cmToPt(4.25), cmToPt(2), cmToPt(2), cmToPt(2) ],
+                    widths: [cmToPt(0.69), cmToPt(8), cmToPt(2.5), cmToPt(2.5), cmToPt(4.25), cmToPt(2), cmToPt(2), cmToPt(2)],
                     heights: [10, ...Array(sportsmanCountOnPage).fill(19)],
                     body: [
                         generateTableHeader(),
@@ -166,13 +167,13 @@ function generateSportsmanRow(sportsmanRow, index) {
     //{ text: sportsmanRow.birthday, margin: defaultMargin },
 
     return [
-        { text: index.toString(), style: 'rowNumber' },
-        { text: sportsmanRow.ФИО, margin: longNameMargin },
-        { text: sportsmanRow.Телефон, margin: defaultMargin },
-        { text: formatDate(sportsmanRow['Дата рождения'], index), margin: defaultMargin },
-        { text: sportsmanRow.Город, margin: defaultMargin },
-        { text: sportsmanRow.Корпус, margin: defaultMargin },
-        { text: sportsmanRow.Комната, margin: defaultMargin },
+        {text: index.toString(), style: 'rowNumber'},
+        {text: sportsmanRow.ФИО, margin: longNameMargin},
+        {text: sportsmanRow.Телефон, margin: defaultMargin},
+        {text: formatDate(sportsmanRow['Дата рождения'], index), margin: defaultMargin},
+        {text: sportsmanRow.Город, margin: defaultMargin},
+        {text: sportsmanRow.Корпус, margin: defaultMargin},
+        {text: sportsmanRow.Комната, margin: defaultMargin},
         {}
     ];
 }
@@ -180,8 +181,7 @@ function generateSportsmanRow(sportsmanRow, index) {
 const formatDate = (birthday, index) => {
     try {
         return format(parseISO(birthday), 'dd.MM.yyyy');
-    }
-    catch (e) {
+    } catch (e) {
         console.log('Invalid format', birthday, ' ', index);
     }
 }
