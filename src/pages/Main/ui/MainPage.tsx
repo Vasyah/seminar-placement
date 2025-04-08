@@ -29,6 +29,7 @@ export const MainPage = () => {
         const usersPayedSum = users.reduce((totalSum, user) => {
             const userPayment = !!user['Сумма оплаты'] ? user['Сумма оплаты'] : 0;
 
+            console.log(user['Сумма оплаты'])
             return (totalSum += +userPayment);
         }, 0);
 
