@@ -21,11 +21,14 @@ import {cmToPt} from './pdf';
 import {generateEmptyRows} from './reports/Helpers';
 import {format, parseISO} from 'date-fns';
 
-const sportsmanCountOnPage = 23;
+const userCount = 25;
 const maxNameLength = 22;
 
 export async function downloadGeneralInfoReport(report, title) {
+    console.log(report)
     const pages = generateGeneralInfoPages(report);
+
+    console.log(pages)
     const docDefinition = {
         pageMargins: [15, 40, 10, 0],
         header: function (currentPage) {
@@ -33,7 +36,7 @@ export async function downloadGeneralInfoReport(report, title) {
                 columns: [
                     {
                         stack: [{text: title}],
-                        fontSize: 11,
+                        fontSize: 14,
                         bold: true,
                         alignment: 'center',
                         margin: [0, 10, 0, 0],
@@ -43,7 +46,7 @@ export async function downloadGeneralInfoReport(report, title) {
         },
         content: [...pages.map((p) => p.content)],
         defaultStyle: {
-            fontSize: 8,
+            fontSize: 10,
         },
         styles: {
             columnTitle: {
@@ -58,7 +61,7 @@ export async function downloadGeneralInfoReport(report, title) {
                 alignment: 'center',
                 margin: [0, 2, 0, 0],
                 bold: true,
-            },
+            }
         },
         pageOrientation: 'landscape',
     };
@@ -87,16 +90,26 @@ export async function downloadGeneralInfoReport(report, title) {
 export function generateGeneralInfoPages(report) {
     const pages = [];
 
-    for (let i = 0; i < report.length; i += sportsmanCountOnPage) {
+    for (let i = 0; i < report.length; i += userCount) {
         const page = {
             content: {
                 table: {
-                    widths: [cmToPt(0.69), cmToPt(8), cmToPt(2.5), cmToPt(2.5), cmToPt(4.25), cmToPt(2), cmToPt(2), cmToPt(2)],
-                    heights: [10, ...Array(sportsmanCountOnPage).fill(19)],
+                    widths: [
+                        cmToPt(0.69),
+                        cmToPt(8),
+                        cmToPt(3),
+                        // cmToPt(2.5),
+                        "*",
+                        cmToPt(2),
+                        cmToPt(2.3),
+                        cmToPt(2)
+                    ],
+                    headerRows: 1,
+                    // heights: [10, ...Array(userCount).fill(19)],
                     body: [
                         generateTableHeader(),
-                        ...report.slice(i, i + sportsmanCountOnPage).map((sr, index) => generateSportsmanRow(sr, index + i + 1)),
-                        ...generateEmptyRows(report.length, i + sportsmanCountOnPage, 7),
+                        ...report.slice(i, i + userCount).map((sr, index) => generateRow(sr, index + i + 1)),
+                        ...generateEmptyRows(report.length, i + userCount, 6),
                     ],
                 },
                 pageBreak: 'after',
@@ -125,21 +138,22 @@ function generateTableHeader() {
             style: 'columnTitle',
             margin: [0, 10, 0, 0],
         },
-        {
-            text: 'Телефон',
-            style: 'columnTitle',
-            margin: [0, 10, 0, 0],
-        },
-        {
-            text: 'Дата рождения',
-            style: 'columnTitle',
-            margin: [0, 10, 0, 0],
-        },
+        // {
+        //     text: 'Телефон',
+        //     style: 'columnTitle',
+        //     margin: [0, 10, 0, 0],
+        // },
         {
             text: 'Город',
             style: 'columnTitle',
             margin: [0, 10, 0, 5],
         },
+        {
+            text: 'Учителя',
+            style: 'columnTitle',
+            margin: [0, 10, 0, 0],
+        },
+
         {
             text: 'Корпус',
             style: 'columnTitle',
@@ -151,14 +165,14 @@ function generateTableHeader() {
             margin: [10, 10, 10, 0],
         },
         {
-            text: 'Номер стола',
+            text: 'Стол',
             style: 'columnTitle',
             margin: [10, 10, 10, 0],
         },
     ];
 }
 
-function generateSportsmanRow(sportsmanRow, index) {
+function generateRow(sportsmanRow, index) {
     //const formattedSportsmanName = formatName(sportsmanRow.name, maxNameLength);
 
     const defaultMargin = [4, 2, 4, 2];
@@ -169,9 +183,11 @@ function generateSportsmanRow(sportsmanRow, index) {
     return [
         {text: index.toString(), style: 'rowNumber'},
         {text: sportsmanRow.ФИО, margin: longNameMargin},
-        {text: sportsmanRow.Телефон, margin: defaultMargin},
-        {text: formatDate(sportsmanRow['Дата рождения'], index), margin: defaultMargin},
         {text: sportsmanRow.Город, margin: defaultMargin},
+        // {text: sportsmanRow.Телефон, margin: defaultMargin},
+        // {text: formatDate(sportsmanRow['Дата рождения'], index), margin: defaultMargin},
+        {text: sportsmanRow['Учителя'], margin: defaultMargin},
+
         {text: sportsmanRow.Корпус, margin: defaultMargin},
         {text: sportsmanRow.Комната, margin: defaultMargin},
         {}

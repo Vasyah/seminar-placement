@@ -39,9 +39,10 @@ export const PlacementPage = () => {
             return <Alert message="Ошибка загрузки участников. Обратитесь к Космическому администратору" type="error"/>;
         }
 
-
-        const usersPayedSorted = users.filter(user => !!user['Сумма оплаты']).sort((a, b) =>
+        const sortedUsers = users.sort((a, b) =>
             a.ФИО.localeCompare(b.ФИО))
+
+        const usersPayedSorted = users.filter(user => !!user['Сумма оплаты'])
 
         const getUsersByCity = (cities: string[], users: IUser[]) => {
             return users.filter(user => cities.includes(user['Город']))
@@ -51,6 +52,13 @@ export const PlacementPage = () => {
             return users.filter(user => !cities.includes(user['Город']))
         }
 
+        const getTeam = (users: IUser[]) => {
+            return users.filter(user => user?.["Статус/Звание"] === 'Космическая команда')
+        }
+
+        const getTeachers = (users: IUser[]) => {
+            return users.filter(user => user?.["Статус/Звание"] === 'Учитель')
+        }
         console.log({
             MOSCOW: getUsersByCity(['Москва'], usersPayedSorted),
             SPB: getUsersByCity(['Санкт-Петербург'], usersPayedSorted),
@@ -59,20 +67,29 @@ export const PlacementPage = () => {
         })
 
 
-        const getPdfTitle = (city: string[] | null) => {
-            if (!city) return 'Расселение. Общий список'
+        const getPdfTitle = (value: string | string[] | null) => {
+            if (!value) return 'Общий список'
 
-            if (city?.length > 2) {
-                return 'Расселение. Остальные'
-            } else if (city?.length === 2) {
-                return 'Расселение. Тольятти, Самара'
+            if (Array.isArray(value)) {
+                if (value?.length > 2) {
+                    return 'Остальные'
+                } else if (value?.length === 2) {
+                    return 'Тольятти, Самара'
+                } else {
+
+                    if (value.includes('Москва')) {
+                        return 'Москва'
+                    }
+
+                    return 'Санкт-Петербург'
+                }
             } else {
-
-                if (city.includes('Москва')) {
-                    return 'Расселение. Москва'
+                if (value === 'Космические') {
+                    return 'Космическая команда'
+                } else if (value === 'Учителя') {
+                    return 'Учителя'
                 }
 
-                return 'Расселение. Санкт-Петербург'
             }
         }
 
@@ -82,46 +99,52 @@ export const PlacementPage = () => {
             else if (city === 'Москва') return ['Москва']
             else if (city === "Санкт-Петербург") return ["Санкт-Петербург"]
             else if (city === 'Тольятти') return ['Тольятти', 'Самара']
-            else {
+            else if (city === 'Остальные') {
                 return ['Москва', 'Санкт-Петербург', 'Тольятти', 'Самара']
-            }
+            }else{return city}
         }
         return (
             <>
                 <Row justify={'start'}>
                     <Col>
-                        <Flex gap={'small'}><Select onChange={setDownloadCity} placeholder={'Выберите город'} style={{minWidth: 150}} value={downloadCity}>
+                        <Flex gap={'small'}><Select onChange={setDownloadCity} placeholder={'Выберите город'}
+                                                    style={{minWidth: 150}} value={downloadCity}>
                             <Select.Option value={''}>Все</Select.Option>
                             <Select.Option value={'Москва'}>Москва</Select.Option>
                             <Select.Option value={'Санкт-Петербург'}>Санкт-Петербург</Select.Option>
                             <Select.Option value={'Тольятти'}>Тольятти/Самара</Select.Option>
-                            <Select.Option value={'Остальные'}>Все
-                                остальные</Select.Option>
+                            <Select.Option value={'Остальные'}>Все остальные</Select.Option>
+                            <Select.Option value={'Космические'}>Космическая команда</Select.Option>
+                            <Select.Option value={'Учителя'}>Учителя</Select.Option>
                         </Select>
-                        <ButtonWithTooltip
-                            tooltipProps={{title: 'Скачать список участников'}}
-                            buttonProps={{
-                                onClick: async () => {
-                                    setPDFLoading(true);
-                                    const downloadCityValue = getValue(downloadCity);
-                                    const pageTitle = getPdfTitle(downloadCityValue)
+                            <ButtonWithTooltip
+                                tooltipProps={{title: 'Скачать список участников'}}
+                                buttonProps={{
+                                    onClick: async () => {
+                                        setPDFLoading(true);
+                                        const downloadValue = getValue(downloadCity);
+                                        const pageTitle = getPdfTitle(downloadValue)
 
-                                    if (!downloadCityValue) {
-                                        await downloadGeneralInfoReport(usersPayedSorted, pageTitle);
-                                    } else if (downloadCityValue?.length > 3) {
-                                        await downloadGeneralInfoReport(getUsersByOtherCity(downloadCityValue, usersPayedSorted), pageTitle).then(() => setPDFLoading(false));
-                                    } else {
-                                        await downloadGeneralInfoReport(getUsersByCity(downloadCityValue, usersPayedSorted), pageTitle);
-                                    }
+                                        if (!downloadValue) {
+                                            await downloadGeneralInfoReport(usersPayedSorted, pageTitle);
+                                        } else if (Array.isArray(downloadValue) && downloadValue?.length > 3) {
+                                            await downloadGeneralInfoReport(getUsersByOtherCity(downloadValue, usersPayedSorted), pageTitle).then(() => setPDFLoading(false));
+                                        } else if (Array.isArray(downloadValue)) {
+                                            await downloadGeneralInfoReport(getUsersByCity(downloadValue, usersPayedSorted), pageTitle);
+                                        } else if (downloadValue === 'Космические') {
+                                            await downloadGeneralInfoReport(getTeam(sortedUsers), pageTitle);
+                                        } else {
+                                            await downloadGeneralInfoReport(getTeachers(sortedUsers), pageTitle)
+                                        }
 
-                                    setPDFLoading(false);
+                                        setPDFLoading(false);
 
-                                },
-                                icon: <FilePdfOutlined/>,
-                            }}
-                        >
-                            Скачать список участников
-                        </ButtonWithTooltip></Flex>
+                                    },
+                                    icon: <FilePdfOutlined/>,
+                                }}
+                            >
+                                Скачать список участников
+                            </ButtonWithTooltip></Flex>
                     </Col>
                 </Row>
                 <Spin spinning={isUpdating || isPDFLoading} tip="Загрузка..." size="large" fullscreen
