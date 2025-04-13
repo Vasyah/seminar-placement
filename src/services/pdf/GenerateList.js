@@ -1,41 +1,41 @@
 // import statement
-import pdfMake from "pdfmake/build/pdfmake";
+import pdfMake from 'pdfmake/build/pdfmake';
 
 // Defining and Using Custom Fonts
 const pdfMakeFonts = {
     Roboto: {
-        normal:
-            "https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Regular.ttf",
-        bold: "https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Medium.ttf",
-        italics:
-            "https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Italic.ttf",
-        bolditalics:
-            "https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-MediumItalic.ttf",
+        normal: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Regular.ttf',
+        bold: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Medium.ttf',
+        italics: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Italic.ttf',
+        bolditalics: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-MediumItalic.ttf',
     },
 };
 
 // Assign the custom fonts to pdfMake
 pdfMake.fonts = pdfMakeFonts;
 
-import {cmToPt} from './pdf';
-import {generateEmptyRows} from './reports/Helpers';
-import {format, parseISO} from 'date-fns';
+import { cmToPt } from './pdf';
+import { generateEmptyRows } from './reports/Helpers';
+import { format, parseISO } from 'date-fns';
 
-const userCount = 25;
+let userCount = 25;
 const maxNameLength = 22;
 
-export async function downloadGeneralInfoReport(report, title) {
-    console.log(report)
+export async function downloadGeneralInfoReport(report, title, type) {
+    if (type === 'common') {
+        userCount = 28;
+    }
+
     const pages = generateGeneralInfoPages(report);
 
-    console.log(pages)
+    console.log(pages, userCount);
     const docDefinition = {
         pageMargins: [15, 40, 10, 0],
         header: function (currentPage) {
             return {
                 columns: [
                     {
-                        stack: [{text: title}],
+                        stack: [{ text: title }],
                         fontSize: 14,
                         bold: true,
                         alignment: 'center',
@@ -61,7 +61,7 @@ export async function downloadGeneralInfoReport(report, title) {
                 alignment: 'center',
                 margin: [0, 2, 0, 0],
                 bold: true,
-            }
+            },
         },
         pageOrientation: 'landscape',
     };
@@ -94,23 +94,10 @@ export function generateGeneralInfoPages(report) {
         const page = {
             content: {
                 table: {
-                    widths: [
-                        cmToPt(0.69),
-                        cmToPt(8),
-                        cmToPt(3),
-                        // cmToPt(2.5),
-                        "*",
-                        cmToPt(2),
-                        cmToPt(2.3),
-                        cmToPt(2)
-                    ],
+                    widths: [cmToPt(1), cmToPt(7), cmToPt(3), cmToPt(10), cmToPt(2), cmToPt(2.3), cmToPt(2)],
                     headerRows: 1,
                     // heights: [10, ...Array(userCount).fill(19)],
-                    body: [
-                        generateTableHeader(),
-                        ...report.slice(i, i + userCount).map((sr, index) => generateRow(sr, index + i + 1)),
-                        ...generateEmptyRows(report.length, i + userCount, 6),
-                    ],
+                    body: [generateTableHeader(), ...report.slice(i, i + userCount).map((sr, index) => generateRow(sr, index + i + 1)), ...generateEmptyRows(report.length, i + userCount, 6)],
                 },
                 pageBreak: 'after',
                 layout: 'zeroPaddingsLayout',
@@ -181,16 +168,16 @@ function generateRow(sportsmanRow, index) {
     //{ text: sportsmanRow.birthday, margin: defaultMargin },
 
     return [
-        {text: index.toString(), style: 'rowNumber'},
-        {text: sportsmanRow.ФИО, margin: longNameMargin},
-        {text: sportsmanRow.Город, margin: defaultMargin},
+        { text: index.toString(), style: 'rowNumber', margin: defaultMargin },
+        { text: getName(sportsmanRow.ФИО), margin: defaultMargin },
+        { text: getCityTitle(sportsmanRow.Город), margin: defaultMargin },
         // {text: sportsmanRow.Телефон, margin: defaultMargin},
         // {text: formatDate(sportsmanRow['Дата рождения'], index), margin: defaultMargin},
-        {text: sportsmanRow['Учителя'], margin: defaultMargin},
+        { text: sportsmanRow['Учителя'], margin: defaultMargin },
 
-        {text: sportsmanRow.Корпус, margin: defaultMargin},
-        {text: sportsmanRow.Комната, margin: defaultMargin},
-        {}
+        { text: sportsmanRow.Корпус, margin: defaultMargin },
+        { text: sportsmanRow.Комната, margin: defaultMargin },
+        {},
     ];
 }
 
@@ -200,4 +187,16 @@ const formatDate = (birthday, index) => {
     } catch (e) {
         console.log('Invalid format', birthday, ' ', index);
     }
-}
+};
+
+const getCityTitle = (city) => {
+    if (city === 'Санкт-Петербург') return 'СПБ';
+
+    return city;
+};
+
+const getName = (name, status) => {
+    if (status === 'Ребёнок') return `[Ребёнок] ${name}`;
+
+    return name;
+};
