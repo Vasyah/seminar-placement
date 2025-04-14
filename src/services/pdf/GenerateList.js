@@ -1,6 +1,10 @@
 // import statement
 import pdfMake from 'pdfmake/build/pdfmake';
 
+export const pdfType = {
+    badges: 'badges',
+    'teachers': 'teachers',
+}
 // Defining and Using Custom Fonts
 const pdfMakeFonts = {
     Roboto: {
@@ -14,19 +18,26 @@ const pdfMakeFonts = {
 // Assign the custom fonts to pdfMake
 pdfMake.fonts = pdfMakeFonts;
 
-import { cmToPt } from './pdf';
-import { generateEmptyRows } from './reports/Helpers';
-import { format, parseISO } from 'date-fns';
+import {cmToPt} from './pdf';
+import {generateEmptyRows} from './reports/Helpers';
+import {format, parseISO} from 'date-fns';
 
 let userCount = 25;
 const maxNameLength = 22;
 
 export async function downloadGeneralInfoReport(report, title, type) {
-    if (type === 'common' || type === 'otherCity' || type === 'teachers') {
+    if (type === 'common' || type === 'otherCity') {
         userCount = 28;
     }
 
-    const pages = generateGeneralInfoPages(report);
+    if (type === pdfType.teachers) {
+        userCount = 30
+    }
+    if (type === pdfType.badges) {
+        userCount = 45;
+    }
+
+    const pages = generateGeneralInfoPages(report, type);
 
     console.log(pages, userCount);
     const docDefinition = {
@@ -35,7 +46,7 @@ export async function downloadGeneralInfoReport(report, title, type) {
             return {
                 columns: [
                     {
-                        stack: [{ text: title }],
+                        stack: [{text: title}],
                         fontSize: 14,
                         bold: true,
                         alignment: 'center',
@@ -63,7 +74,7 @@ export async function downloadGeneralInfoReport(report, title, type) {
                 bold: true,
             },
         },
-        pageOrientation: 'landscape',
+        pageOrientation: type === pdfType.badges ? 'portrait' : 'landscape',
     };
 
     const tableLayouts = {
@@ -87,17 +98,17 @@ export async function downloadGeneralInfoReport(report, title, type) {
     pdfMake.createPdf(docDefinition, tableLayouts).download(`${title}.pdf`);
 }
 
-export function generateGeneralInfoPages(report) {
+export function generateGeneralInfoPages(report, type) {
     const pages = [];
 
     for (let i = 0; i < report.length; i += userCount) {
         const page = {
             content: {
                 table: {
-                    widths: [cmToPt(1), cmToPt(7), cmToPt(3), cmToPt(10), cmToPt(2), cmToPt(2.3), cmToPt(2)],
+                    widths: getColumnSize(type),
                     headerRows: 1,
                     // heights: [10, ...Array(userCount).fill(19)],
-                    body: [generateTableHeader(), ...report.slice(i, i + userCount).map((sr, index) => generateRow(sr, index + i + 1)), ...generateEmptyRows(report.length, i + userCount, 6)],
+                    body: [getColumns(type), ...report.slice(i, i + userCount).map((sr, index) => generateRow(sr, index + i + 1, type)), ...generateEmptyRows(report.length, i + userCount, type === pdfType.badges ? 2 : 6)],
                 },
                 pageBreak: 'after',
                 layout: 'zeroPaddingsLayout',
@@ -111,6 +122,14 @@ export function generateGeneralInfoPages(report) {
     }
 
     return pages;
+}
+
+function getColumnSize(type) {
+    if (type === pdfType.badges) {
+        return [cmToPt(1), cmToPt(7), cmToPt(4)]
+    }
+
+    return [cmToPt(1), cmToPt(7), cmToPt(3), cmToPt(10), cmToPt(2), cmToPt(2.3), cmToPt(2)]
 }
 
 function generateTableHeader() {
@@ -159,35 +178,55 @@ function generateTableHeader() {
     ];
 }
 
-function generateRow(sportsmanRow, index) {
-    //const formattedSportsmanName = formatName(sportsmanRow.name, maxNameLength);
+function getColumns(type) {
+    if (type === pdfType.badges) {
+        return [
+            {
+                text: '№',
+                style: 'columnTitle',
+                margin: [0, 10, 0, 0],
+            },
+            {
+                text: 'ФИО',
+                style: 'columnTitle',
+                margin: [0, 10, 0, 0],
+            },
+            {
+                text: 'Город',
+                style: 'columnTitle',
+                margin: [0, 10, 0, 5],
+            },
 
+        ];
+    }
+
+    return generateTableHeader()
+}
+
+function generateRow(sportsmanRow, index, type) {
     const defaultMargin = [4, 2, 4, 2];
-    const longNameMargin = [4, 0, 4, 0];
-    //{ text: formattedSportsmanName, margin: formattedSportsmanName.length <= maxNameLength ? defaultMargin : longNameMargin },
-    //{ text: sportsmanRow.birthday, margin: defaultMargin },
+
+    if (type === pdfType.badges) {
+        return [
+            {text: index.toString(), style: 'rowNumber', margin: defaultMargin},
+            {text: sportsmanRow.ФИО, margin: defaultMargin},
+            {text: pdfType.badges ? sportsmanRow.Город : getCityTitle(sportsmanRow.Город), margin: defaultMargin},
+        ];
+    }
 
     return [
-        { text: index.toString(), style: 'rowNumber', margin: defaultMargin },
-        { text: getName(sportsmanRow.ФИО), margin: defaultMargin },
-        { text: getCityTitle(sportsmanRow.Город), margin: defaultMargin },
+        {text: index.toString(), style: 'rowNumber', margin: defaultMargin},
+        {text: sportsmanRow.ФИО, margin: defaultMargin},
+        {text: getCityTitle(sportsmanRow.Город), margin: defaultMargin},
         // {text: sportsmanRow.Телефон, margin: defaultMargin},
         // {text: formatDate(sportsmanRow['Дата рождения'], index), margin: defaultMargin},
-        { text: sportsmanRow['Учителя'], margin: defaultMargin },
+        {text: sportsmanRow['Учителя'], margin: defaultMargin},
 
-        { text: sportsmanRow.Корпус, margin: defaultMargin },
-        { text: sportsmanRow.Комната, margin: defaultMargin },
+        {text: sportsmanRow.Корпус, margin: defaultMargin},
+        {text: sportsmanRow.Комната, margin: defaultMargin},
         {},
     ];
 }
-
-const formatDate = (birthday, index) => {
-    try {
-        return format(parseISO(birthday), 'dd.MM.yyyy');
-    } catch (e) {
-        console.log('Invalid format', birthday, ' ', index);
-    }
-};
 
 const getCityTitle = (city) => {
     if (city === 'Санкт-Петербург') return 'СПБ';
@@ -195,8 +234,3 @@ const getCityTitle = (city) => {
     return city;
 };
 
-const getName = (name, status) => {
-    if (status === 'Ребёнок') return `[Ребёнок] ${name}`;
-
-    return name;
-};

@@ -1,200 +1,250 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { Alert, Col, Flex, Row, Select, Spin } from 'antd';
+import React, {useCallback, useEffect, useState} from 'react';
+import {Alert, Col, Flex, Row, Select, Spin} from 'antd';
 
-import { IUser } from 'features/UserList/types';
-import { useListUsers, useUpdateUserAccomodation } from 'shared/api/googleSheets';
+import {IUser} from 'features/UserList/types';
+import {useListUsers, useUpdateUserAccomodation} from 'shared/api/googleSheets';
 import Building from 'features/Map/components/Building/Building';
-import { BUILDINGS_INFO } from 'features/UserList/mock';
+import {BUILDINGS_INFO} from 'features/UserList/mock';
 import ButtonWithTooltip from 'shared/components/MyButton/MyButton';
-import { downloadGeneralInfoReport } from 'services/pdf/GenerateList';
-import { FilePdfOutlined } from '@ant-design/icons';
-import { Encrypter } from 'shared/utils/encryptUserId.ts/encryptUserId';
-import { IRoomUserOption } from '../types';
+import {downloadGeneralInfoReport} from 'services/pdf/GenerateList';
+import {FilePdfOutlined} from '@ant-design/icons';
+import {Encrypter} from 'shared/utils/encryptUserId.ts/encryptUserId';
+import {IRoomUserOption} from '../types';
 
 export const PlacementPage = () => {
-    const usersData = useListUsers();
-    const [users, setUsers] = useState<IUser[]>([]);
-    const [isPDFLoading, setPDFLoading] = useState(false);
-    const [downloadCity, setDownloadCity] = useState<string>('');
-    const { updateUserAccomodation, isUpdating } = useUpdateUserAccomodation();
+        const usersData = useListUsers();
+        const [users, setUsers] = useState<IUser[]>([]);
+        const [isPDFLoading, setPDFLoading] = useState(false);
+        const [downloadCity, setDownloadCity] = useState<string>('');
+        const {updateUserAccomodation, isUpdating} = useUpdateUserAccomodation();
 
-    const getOptions = useCallback(
-        (users: IUser[]): IRoomUserOption[] =>
-            users.map(({ user_id, ФИО, Город, Комната, Корпус }) => {
-                const placement = !!Корпус && !!Комната ? ` (Корпус: ${Корпус}, Комната: ${Комната})` : '';
-                return { value: Encrypter.encodeId(user_id, ФИО), label: ФИО, Город, id: user_id, placement: placement };
-            }),
-        [],
-    );
-    useEffect(() => {
-        if (usersData.isFetched) {
-            setUsers(usersData?.data);
-        }
-    }, [usersData]);
-
-    if (usersData.isLoading) {
-        return <Spin tip="Загрузка..." size="large" fullscreen />;
-    }
-
-    if (usersData.isError) {
-        return <Alert message="Ошибка загрузки участников. Обратитесь к Космическому администратору" type="error" />;
-    }
-
-    const sortedUsers = users.sort((a, b) => a.ФИО.localeCompare(b.ФИО));
-
-    const getPayedusers = (users: IUser[], withKids?: boolean) => {
-        return users.filter((user) => {
-            console.log(user?.ФИО, user?.['Сумма оплаты']);
-            if (withKids) {
-                return !!user['Сумма оплаты'] || user?.['Статус/Звание'] === 'Ребёнок';
+        const getOptions = useCallback(
+            (users: IUser[]): IRoomUserOption[] =>
+                users.map(({user_id, ФИО, Город, Комната, Корпус}) => {
+                    const placement = !!Корпус && !!Комната ? ` (Корпус: ${Корпус}, Комната: ${Комната})` : '';
+                    return {value: Encrypter.encodeId(user_id, ФИО), label: ФИО, Город, id: user_id, placement: placement};
+                }),
+            [],
+        );
+        useEffect(() => {
+            if (usersData.isFetched) {
+                setUsers(usersData?.data);
             }
+        }, [usersData]);
 
-            return !!user['Сумма оплаты'];
-        });
-    };
-    const usersPayedSorted = getPayedusers(sortedUsers, true);
+        if (usersData.isLoading) {
+            return <Spin tip="Загрузка..." size="large" fullscreen/>;
+        }
 
-    const getIsExluded = (user: IUser) => {
-        const isTeacher = user?.['Статус/Звание'] === 'Учитель';
-        const isKid = user?.['Статус/Звание'] === 'Ребёнок';
-        const IsOrganizator = user?.['Статус/Звание'] === 'Космическая команда';
+        if (usersData.isError) {
+            return <Alert message="Ошибка загрузки участников. Обратитесь к Космическому администратору" type="error"/>;
+        }
 
-        return isTeacher || isKid || IsOrganizator;
-    };
-    const getUsersByCity = (cities: string[], users: IUser[]) => {
-        return users.filter((user) => {
-            if (getIsExluded(user)) return false;
-            return cities.includes(user['Город']);
-        });
-    };
+        const sortedUsers = users.sort((a, b) => a.ФИО.localeCompare(b.ФИО));
 
-    const getUsersByOtherCity = (cities: string[], users: IUser[]) => {
-        return users.filter((user) => {
-            if (getIsExluded(user)) return false;
-            return !cities.includes(user['Город']);
-        });
-    };
-
-    const getTeam = (users: IUser[]) => {
-        return users.filter((user) => user?.['Статус/Звание'] === 'Космическая команда');
-    };
-
-    const getTeachers = (users: IUser[]) => {
-        return users.filter((user) => user?.['Статус/Звание'] === 'Учитель' || user?.ФИО === 'Козловская Дарья Васильевна' || user?.ФИО === 'Ким Сэн Хи');
-    };
-
-    const getKids = (users: IUser[]) => {
-        return users.filter((user) => user?.['Статус/Звание'] === 'Ребёнок');
-    };
-
-    console.log({
-        MOSCOW: getUsersByCity(['Москва'], usersPayedSorted),
-        SPB: getUsersByCity(['Санкт-Петербург'], usersPayedSorted),
-        Tolyatti: getUsersByCity(['Тольятти', 'Самара'], usersPayedSorted),
-        Other: getUsersByOtherCity(['Москва', 'Санкт-Петербург', 'Тольятти', 'Самара'], usersPayedSorted),
-    });
-
-    const getPdfTitle = (value: string | string[] | null) => {
-        if (!value) return 'Общий список';
-
-        if (Array.isArray(value)) {
-            if (value?.length > 2) {
-                return 'Остальные';
-            } else if (value?.length === 2) {
-                return 'Тольятти, Самара';
-            } else {
-                if (value.includes('Москва')) {
-                    return 'Москва';
+        const getPayedusers = (users: IUser[], withKids?: boolean) => {
+            return users.filter((user) => {
+                if (withKids) {
+                    return !!user['Сумма оплаты'] || user?.['Статус/Звание'] === 'Ребёнок';
                 }
 
-                return 'Санкт-Петербург';
+                return !!user['Сумма оплаты'];
+            });
+        };
+        const usersPayedSorted = getPayedusers(sortedUsers, true);
+
+        const getIsExluded = (user: IUser) => {
+            const isTeacher = user?.['Статус/Звание'] === 'Учитель';
+            const isKid = user?.['Статус/Звание'] === 'Ребёнок';
+            const IsOrganizator = user?.['Статус/Звание'] === 'Космическая команда';
+
+            return isTeacher || isKid || IsOrganizator;
+        };
+        const getUsersByCity = (cities: string[], users: IUser[]) => {
+            return users.filter((user) => {
+                if (getIsExluded(user)) return false;
+                return cities.includes(user['Город']);
+            });
+        };
+
+        const getUsersByOtherCity = (cities: string[], users: IUser[]) => {
+            return users.filter((user) => {
+                if (getIsExluded(user)) return false;
+                return !cities.includes(user['Город']);
+            });
+        };
+
+        const isKosmosTeacher = (user: IUser) => user?.ФИО === 'Козловская Дарья Васильевна' || user?.ФИО === 'Ким Сэн Хи'
+        const getTeam = (users: IUser[]) => {
+            return users.filter((user) => user?.['Статус/Звание'] === 'Космическая команда');
+        };
+
+        const isTeacher = (user: IUser) => user?.['Статус/Звание'] === 'Учитель' || isKosmosTeacher(user)
+        const getTeachers = (users: IUser[]) => {
+            return users.filter((user) => isTeacher(user));
+        };
+
+        const getStudents = (users: IUser[]) => {
+            return users.filter((user) => !isTeacher(user));
+        };
+
+        const getKids = (users: IUser[]) => {
+            return users.filter((user) => user?.['Статус/Звание'] === 'Ребёнок');
+        };
+
+        const getBadges = (users: IUser[]) => {
+            // трансформировать ФИО
+            const transformedUsers = users.map((user) => {
+                const userTmp = {...user}
+
+                if (user?.ФИО === 'ЛА') {
+                    userTmp.ФИО = 'Кузьмина Лариса Алексеевна'
+                }
+
+                if (user?.ФИО === 'ЛарАл') {
+                    userTmp.ФИО = 'Ларин Александр'
+                }
+
+                if (user?.ФИО === 'ЛарЮл') {
+                    userTmp.ФИО = 'Ларина Юлия Викторовна'
+                }
+
+                if (user?.["Статус/Звание"] !== 'Учитель' && user?.["ФИО"] !== 'Козловская Дарья Васильевна' && user?.["ФИО"] !== 'Ким Сэн Хи') {
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-expect-error
+                    const fio = userTmp?.ФИО.split(/\s+/).map(str => str.trim()).slice(0, 2).join(' ');
+                    // userTmp.ФИО = fio.replace(user?.Отчество, '')
+                    userTmp.ФИО = fio
+                    console.log({
+                        trimmed: user?.ФИО.split(' ').map(str => str.trim()),
+                        sliced: user?.ФИО.split(' ').map(str => str.trim()).slice(0, 2)
+                    })
+                }
+
+                return userTmp;
+
+            })
+
+            const teachers = getTeachers(transformedUsers).sort((a, b) => a.ФИО.localeCompare(b.ФИО));
+            const students = getStudents(transformedUsers).sort((a, b) => a.ФИО.localeCompare(b.ФИО));
+
+
+            // отсортировать Учителя -> Ученики -> Дети
+            return teachers.concat(students);
+        };
+
+        const getPdfTitle = (value: string | string[] | null) => {
+            if (!value) return 'Общий список';
+
+            if (Array.isArray(value)) {
+                if (value?.length > 2) {
+                    return 'Остальные города';
+                } else if (value?.length === 2) {
+                    return 'Тольятти, Самара';
+                } else {
+                    if (value.includes('Москва')) {
+                        return 'Москва';
+                    }
+
+                    return 'Санкт-Петербург';
+                }
+            } else {
+                if (value === 'Космические') {
+                    return 'Космическая команда';
+                } else if (value === 'Учителя') {
+                    return 'Учителя';
+                } else if (value === 'Дети') {
+                    return 'Дети';
+                } else if (value === 'Бейджи') return 'Бейджи'
             }
-        } else {
-            if (value === 'Космические') {
-                return 'Космическая команда';
-            } else if (value === 'Учителя') {
-                return 'Учителя';
-            } else if (value === 'Дети') {
-                return 'Дети';
+        };
+
+        const getValue = (city: string) => {
+            if (!city) return null;
+            else if (city === 'Москва') return ['Москва'];
+            else if (city === 'Санкт-Петербург') return ['Санкт-Петербург'];
+            else if (city === 'Тольятти') return ['Тольятти', 'Самара'];
+            else if (city === 'Остальные') {
+                return ['Москва', 'Санкт-Петербург', 'Тольятти', 'Самара'];
+            } else {
+                return city;
             }
-        }
-    };
+        };
 
-    const getValue = (city: string) => {
-        if (!city) return null;
-        else if (city === 'Москва') return ['Москва'];
-        else if (city === 'Санкт-Петербург') return ['Санкт-Петербург'];
-        else if (city === 'Тольятти') return ['Тольятти', 'Самара'];
-        else if (city === 'Остальные') {
-            return ['Москва', 'Санкт-Петербург', 'Тольятти', 'Самара'];
-        } else {
-            return city;
-        }
-    };
+        return (
+            <>
+                <Row justify={'start'}>
+                    <Col>
+                        <Flex gap={'small'}>
+                            <Select onChange={setDownloadCity} placeholder={'Выберите город'} style={{minWidth: 200}}
+                                    value={downloadCity}>
+                                <Select.Option value={''}>Все</Select.Option>
+                                <Select.Option value={'Москва'}>Москва</Select.Option>
+                                <Select.Option value={'Санкт-Петербург'}>Санкт-Петербург</Select.Option>
+                                <Select.Option value={'Тольятти'}>Тольятти/Самара</Select.Option>
+                                <Select.Option value={'Остальные'}>Все остальные</Select.Option>
+                                <Select.Option value={'Космические'}>Космическая команда</Select.Option>
+                                <Select.Option value={'Дети'}>Дети</Select.Option>
+                                <Select.Option value={'Учителя'}>Учителя</Select.Option>
+                                <Select.Option value={'Бейджи'}>Бейджи (потом конвертировать в PDF</Select.Option>
+                            </Select>
+                            <ButtonWithTooltip
+                                tooltipProps={{title: 'Скачать список участников'}}
+                                buttonProps={{
+                                    onClick: async () => {
+                                        setPDFLoading(true);
+                                        const downloadValue = getValue(downloadCity);
+                                        const pageTitle = getPdfTitle(downloadValue);
 
-    return (
-        <>
-            <Row justify={'start'}>
-                <Col>
-                    <Flex gap={'small'}>
-                        <Select onChange={setDownloadCity} placeholder={'Выберите город'} style={{ minWidth: 150 }} value={downloadCity}>
-                            <Select.Option value={''}>Все</Select.Option>
-                            <Select.Option value={'Москва'}>Москва</Select.Option>
-                            <Select.Option value={'Санкт-Петербург'}>Санкт-Петербург</Select.Option>
-                            <Select.Option value={'Тольятти'}>Тольятти/Самара</Select.Option>
-                            <Select.Option value={'Остальные'}>Все остальные</Select.Option>
-                            <Select.Option value={'Космические'}>Космическая команда</Select.Option>
-                            <Select.Option value={'Дети'}>Дети</Select.Option>
-                            <Select.Option value={'Учителя'}>Учителя</Select.Option>
-                        </Select>
-                        <ButtonWithTooltip
-                            tooltipProps={{ title: 'Скачать список участников' }}
-                            buttonProps={{
-                                onClick: async () => {
-                                    setPDFLoading(true);
-                                    const downloadValue = getValue(downloadCity);
-                                    const pageTitle = getPdfTitle(downloadValue);
+                                        if (!downloadValue) {
+                                            await downloadGeneralInfoReport(usersPayedSorted, pageTitle, 'common');
+                                        } else if (Array.isArray(downloadValue) && downloadValue?.length > 3) {
+                                            await downloadGeneralInfoReport(
+                                                getUsersByOtherCity(downloadValue, usersPayedSorted).sort((a, b) => a.Город.localeCompare(b.Город)),
+                                                pageTitle,
+                                                'otherCity',
+                                            ).then(() => setPDFLoading(false));
+                                        } else if (Array.isArray(downloadValue)) {
+                                            await downloadGeneralInfoReport(getUsersByCity(downloadValue, usersPayedSorted), pageTitle);
+                                        } else if (downloadValue === 'Космические') {
+                                            await downloadGeneralInfoReport(getTeam(sortedUsers), pageTitle);
+                                        } else if (downloadValue === 'Дети') {
+                                            await downloadGeneralInfoReport(getKids(sortedUsers), pageTitle);
+                                        } else if (downloadValue === 'Бейджи') {
+                                            await downloadGeneralInfoReport(getBadges(sortedUsers), pageTitle, 'badges');
+                                        } else {
+                                            const sortedTeachers = getTeachers(sortedUsers).sort((a, b) => {
+                                                return a.Город.localeCompare(b.Город)
+                                            })
 
-                                    if (!downloadValue) {
-                                        await downloadGeneralInfoReport(usersPayedSorted, pageTitle, 'common');
-                                    } else if (Array.isArray(downloadValue) && downloadValue?.length > 3) {
-                                        await downloadGeneralInfoReport(
-                                            getUsersByOtherCity(downloadValue, usersPayedSorted).sort((a, b) => a.Город.localeCompare(b.Город)),
-                                            pageTitle,
-                                            'otherCity',
-                                        ).then(() => setPDFLoading(false));
-                                    } else if (Array.isArray(downloadValue)) {
-                                        await downloadGeneralInfoReport(getUsersByCity(downloadValue, usersPayedSorted), pageTitle);
-                                    } else if (downloadValue === 'Космические') {
-                                        await downloadGeneralInfoReport(getTeam(sortedUsers), pageTitle);
-                                    } else if (downloadCity === 'Дети') {
-                                        await downloadGeneralInfoReport(getKids(sortedUsers), pageTitle);
-                                    } else {
-                                        await downloadGeneralInfoReport(
-                                            getTeachers(sortedUsers).sort((a, b) => a.Город.localeCompare(b.Город)),
-                                            pageTitle,
-                                            'teachers',
-                                        );
-                                    }
+                                            const LAindex = sortedTeachers.findIndex(teacher => teacher?.ФИО === 'ЛА')
 
-                                    setPDFLoading(false);
-                                },
-                                icon: <FilePdfOutlined />,
-                            }}
-                        >
-                            Скачать список участников
-                        </ButtonWithTooltip>
-                    </Flex>
-                </Col>
-            </Row>
-            <Spin spinning={isUpdating || isPDFLoading} tip="Загрузка..." size="large" fullscreen style={{ zIndex: '9999!important' }} />
-            <Row wrap={true}>
-                {Object.values(BUILDINGS_INFO).map((building) => (
-                    <Col span={12} xs={24} xxl={12} key={building.id}>
-                        <Building id={building.id} users={users} updateUser={updateUserAccomodation} isUpdating={isUpdating} getOptions={getOptions} />
+                                            const LA = sortedTeachers.splice(LAindex, 1)
+                                            const mainSortedTeachers = [...LA, ...sortedTeachers]
+                                            await downloadGeneralInfoReport(mainSortedTeachers, pageTitle, 'teachers');
+                                        }
+
+                                        setPDFLoading(false);
+                                    },
+                                    icon: <FilePdfOutlined/>,
+                                }}
+                            >
+                                Скачать список участников
+                            </ButtonWithTooltip>
+                        </Flex>
                     </Col>
-                ))}
-            </Row>
-        </>
-    );
-};
+                </Row>
+                <Spin spinning={isUpdating || isPDFLoading} tip="Загрузка..." size="large" fullscreen
+                      style={{zIndex: '9999!important'}}/>
+                <Row wrap={true}>
+                    {Object.values(BUILDINGS_INFO).map((building) => (
+                        <Col span={12} xs={24} xxl={12} key={building.id}>
+                            <Building id={building.id} users={users} updateUser={updateUserAccomodation}
+                                      isUpdating={isUpdating} getOptions={getOptions}/>
+                        </Col>
+                    ))}
+                </Row>
+            </>
+        );
+    }
+;

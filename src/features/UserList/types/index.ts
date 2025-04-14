@@ -30,4 +30,7 @@ export interface IUser {
     Корпус?: string;
     Этаж?: string;
     Комната?: string;
+    Фамилия?: string;
+    Имя?: string;
+    Отчество?: string;
 }
