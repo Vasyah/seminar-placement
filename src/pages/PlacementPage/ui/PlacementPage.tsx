@@ -80,7 +80,7 @@ export const PlacementPage = () => {
     };
 
     const getTeachers = (users: IUser[]) => {
-        return users.filter((user) => user?.['Статус/Звание'] === 'Учитель' || user?.ФИО === 'Козловская Дарья Васильевна');
+        return users.filter((user) => user?.['Статус/Звание'] === 'Учитель' || user?.ФИО === 'Козловская Дарья Васильевна' || user?.ФИО === 'Ким Сэн Хи');
     };
 
     const getKids = (users: IUser[]) => {
@@ -158,7 +158,11 @@ export const PlacementPage = () => {
                                     if (!downloadValue) {
                                         await downloadGeneralInfoReport(usersPayedSorted, pageTitle, 'common');
                                     } else if (Array.isArray(downloadValue) && downloadValue?.length > 3) {
-                                        await downloadGeneralInfoReport(getUsersByOtherCity(downloadValue, usersPayedSorted), pageTitle).then(() => setPDFLoading(false));
+                                        await downloadGeneralInfoReport(
+                                            getUsersByOtherCity(downloadValue, usersPayedSorted).sort((a, b) => a.Город.localeCompare(b.Город)),
+                                            pageTitle,
+                                            'otherCity',
+                                        ).then(() => setPDFLoading(false));
                                     } else if (Array.isArray(downloadValue)) {
                                         await downloadGeneralInfoReport(getUsersByCity(downloadValue, usersPayedSorted), pageTitle);
                                     } else if (downloadValue === 'Космические') {
@@ -166,7 +170,11 @@ export const PlacementPage = () => {
                                     } else if (downloadCity === 'Дети') {
                                         await downloadGeneralInfoReport(getKids(sortedUsers), pageTitle);
                                     } else {
-                                        await downloadGeneralInfoReport(getTeachers(sortedUsers), pageTitle);
+                                        await downloadGeneralInfoReport(
+                                            getTeachers(sortedUsers).sort((a, b) => a.Город.localeCompare(b.Город)),
+                                            pageTitle,
+                                            'teachers',
+                                        );
                                     }
 
                                     setPDFLoading(false);

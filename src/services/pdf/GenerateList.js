@@ -22,7 +22,7 @@ let userCount = 25;
 const maxNameLength = 22;
 
 export async function downloadGeneralInfoReport(report, title, type) {
-    if (type === 'common') {
+    if (type === 'common' || type === 'otherCity' || type === 'teachers') {
         userCount = 28;
     }
 
