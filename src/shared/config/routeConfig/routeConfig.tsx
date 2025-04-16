@@ -12,6 +12,7 @@ export enum AppRoutes {
     PLACEMENT = 'placement',
     NUTRITION = 'nutrition',
     PAYMENT = 'payment',
+    PROCESS = 'process'
 
 }
 
@@ -19,7 +20,8 @@ export const RoutePath: Record<AppRoutes, string> = {
     [AppRoutes.DASHBOARD]: BASE_URL,
     [AppRoutes.PLACEMENT]: BASE_URL + AppRoutes.PLACEMENT,
     [AppRoutes.NUTRITION]: BASE_URL + AppRoutes.NUTRITION,
-    [AppRoutes.PAYMENT]: BASE_URL  + AppRoutes.PAYMENT,
+    [AppRoutes.PAYMENT]: BASE_URL + AppRoutes.PAYMENT,
+    [AppRoutes.PROCESS]: BASE_URL + AppRoutes.PROCESS,
 };
 
 export type RouteConfig = { path: string; element: React.ReactNode; label: string; icon: JSX.Element };
@@ -53,6 +55,11 @@ export const routeConfig: Record<AppRoutes, RouteConfig> = {
         path: RoutePath.payment,
         element: <Payment/>,
         label: 'Оплата',
+        icon: <LikeOutlined/>,
+    }, [AppRoutes.PROCESS]: {
+        path: RoutePath.process,
+        element: <Payment/>,
+        label: 'Процессы',
         icon: <LikeOutlined/>,
     },
 };

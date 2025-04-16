@@ -115,10 +115,7 @@ export const PlacementPage = () => {
                     const fio = userTmp?.ФИО.split(/\s+/).map(str => str.trim()).slice(0, 2).join(' ');
                     // userTmp.ФИО = fio.replace(user?.Отчество, '')
                     userTmp.ФИО = fio
-                    console.log({
-                        trimmed: user?.ФИО.split(' ').map(str => str.trim()),
-                        sliced: user?.ФИО.split(' ').map(str => str.trim()).slice(0, 2)
-                    })
+                    userTmp.Отчество = ''
                 }
 
                 return userTmp;
@@ -156,6 +153,7 @@ export const PlacementPage = () => {
                 } else if (value === 'Дети') {
                     return 'Дети';
                 } else if (value === 'Бейджи') return 'Бейджи'
+                else if (value === 'Оплата') return 'Сбор на преображение'
             }
         };
 
@@ -176,7 +174,7 @@ export const PlacementPage = () => {
                 <Row justify={'start'}>
                     <Col>
                         <Flex gap={'small'}>
-                            <Select onChange={setDownloadCity} placeholder={'Выберите город'} style={{minWidth: 200}}
+                            <Select onChange={setDownloadCity} placeholder={'Выберите город'} style={{minWidth: 300}}
                                     value={downloadCity}>
                                 <Select.Option value={''}>Все</Select.Option>
                                 <Select.Option value={'Москва'}>Москва</Select.Option>
@@ -186,7 +184,8 @@ export const PlacementPage = () => {
                                 <Select.Option value={'Космические'}>Космическая команда</Select.Option>
                                 <Select.Option value={'Дети'}>Дети</Select.Option>
                                 <Select.Option value={'Учителя'}>Учителя</Select.Option>
-                                <Select.Option value={'Бейджи'}>Бейджи (потом конвертировать в PDF</Select.Option>
+                                <Select.Option value={'Бейджи'}>Бейджи (потом конвертировать в PDF)</Select.Option>
+                                <Select.Option value={'Оплата'}>Сбор оплаты на семинаре</Select.Option>
                             </Select>
                             <ButtonWithTooltip
                                 tooltipProps={{title: 'Скачать список участников'}}
@@ -212,6 +211,8 @@ export const PlacementPage = () => {
                                             await downloadGeneralInfoReport(getKids(sortedUsers), pageTitle);
                                         } else if (downloadValue === 'Бейджи') {
                                             await downloadGeneralInfoReport(getBadges(sortedUsers), pageTitle, 'badges');
+                                        } else if (downloadValue === 'Оплата') {
+                                            await downloadGeneralInfoReport(usersPayedSorted, pageTitle, 'pay');
                                         } else {
                                             const sortedTeachers = getTeachers(sortedUsers).sort((a, b) => {
                                                 return a.Город.localeCompare(b.Город)
